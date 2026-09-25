@@ -27,9 +27,7 @@
             }
           }
         },
-        "tags": [
-          "organizaciones"
-        ]
+        "tags": ["organizaciones"]
       }
     },
     "/api/v1/organizaciones": {
@@ -64,9 +62,7 @@
             "description": "El NIT ya está registrado (R1.7)"
           }
         },
-        "tags": [
-          "organizaciones"
-        ]
+        "tags": ["organizaciones"]
       },
       "get": {
         "operationId": "OrganizacionesController_listar",
@@ -83,9 +79,7 @@
             }
           }
         },
-        "tags": [
-          "organizaciones"
-        ]
+        "tags": ["organizaciones"]
       }
     },
     "/api/v1/organizaciones/{id}": {
@@ -116,9 +110,7 @@
             "description": "No existe o no es del usuario (R6.1)"
           }
         },
-        "tags": [
-          "organizaciones"
-        ]
+        "tags": ["organizaciones"]
       },
       "put": {
         "operationId": "OrganizacionesController_corregir",
@@ -166,9 +158,7 @@
             "description": "No está Devuelta (R4.8) o NIT registrado"
           }
         },
-        "tags": [
-          "organizaciones"
-        ]
+        "tags": ["organizaciones"]
       }
     },
     "/api/v1/organizaciones/{id}/reenvio": {
@@ -205,9 +195,7 @@
             "description": "No está Devuelta"
           }
         },
-        "tags": [
-          "organizaciones"
-        ]
+        "tags": ["organizaciones"]
       }
     },
     "/api/v1/admin/organizaciones/validacion": {
@@ -232,9 +220,7 @@
             "description": "Solo el Administrador de la plataforma (R4.9)"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/api/v1/admin/organizaciones/{id}/aprobacion": {
@@ -268,9 +254,7 @@
             "description": "No está En validación (R4.10)"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/api/v1/admin/organizaciones/{id}/devolucion": {
@@ -314,9 +298,7 @@
             "description": "No está En validación (R4.10)"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/api/v1/catalogos/departamentos": {
@@ -338,9 +320,7 @@
             }
           }
         },
-        "tags": [
-          "catalogos"
-        ]
+        "tags": ["catalogos"]
       }
     },
     "/api/v1/catalogos/departamentos/{codigo}/municipios": {
@@ -371,9 +351,7 @@
             }
           }
         },
-        "tags": [
-          "catalogos"
-        ]
+        "tags": ["catalogos"]
       }
     },
     "/api/v1/catalogos/ciiu": {
@@ -405,9 +383,7 @@
             }
           }
         },
-        "tags": [
-          "catalogos"
-        ]
+        "tags": ["catalogos"]
       }
     },
     "/api/v1/catalogos/arl": {
@@ -429,9 +405,7 @@
             }
           }
         },
-        "tags": [
-          "catalogos"
-        ]
+        "tags": ["catalogos"]
       }
     }
   },
@@ -450,13 +424,7 @@
         "properties": {
           "claseRiesgo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ],
+            "enum": ["I", "II", "III", "IV", "V"],
             "example": "III"
           },
           "trabajadores": {
@@ -465,10 +433,7 @@
             "minimum": 1
           }
         },
-        "required": [
-          "claseRiesgo",
-          "trabajadores"
-        ]
+        "required": ["claseRiesgo", "trabajadores"]
       },
       "CalculoEstandaresDto": {
         "type": "object",
@@ -480,31 +445,19 @@
             }
           }
         },
-        "required": [
-          "sedes"
-        ]
+        "required": ["sedes"]
       },
       "EstandaresAplicablesDto": {
         "type": "object",
         "properties": {
           "estandares": {
             "type": "number",
-            "enum": [
-              7,
-              21,
-              62
-            ],
+            "enum": [7, 21, 62],
             "example": 21
           },
           "riesgoMaximo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ],
+            "enum": ["I", "II", "III", "IV", "V"],
             "example": "III"
           },
           "totalTrabajadores": {
@@ -516,12 +469,7 @@
             "example": "Entre 11 y 50 trabajadores con riesgo máximo I, II o III"
           }
         },
-        "required": [
-          "estandares",
-          "riesgoMaximo",
-          "totalTrabajadores",
-          "regla"
-        ]
+        "required": ["estandares", "riesgoMaximo", "totalTrabajadores", "regla"]
       },
       "SedeDto": {
         "type": "object",
@@ -546,13 +494,7 @@
           },
           "claseRiesgo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ],
+            "enum": ["I", "II", "III", "IV", "V"],
             "example": "II"
           },
           "trabajadores": {
@@ -589,10 +531,7 @@
           },
           "tipoPersona": {
             "type": "string",
-            "enum": [
-              "JURIDICA",
-              "NATURAL"
-            ],
+            "enum": ["JURIDICA", "NATURAL"],
             "example": "JURIDICA"
           },
           "nit": {
@@ -610,11 +549,7 @@
           },
           "repLegalTipoDoc": {
             "type": "string",
-            "enum": [
-              "CC",
-              "CE",
-              "PASAPORTE"
-            ]
+            "enum": ["CC", "CE", "PASAPORTE"]
           },
           "repLegalNumeroDoc": {
             "type": "string",
@@ -664,13 +599,7 @@
           },
           "claseRiesgo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ],
+            "enum": ["I", "II", "III", "IV", "V"],
             "example": "II"
           },
           "trabajadores": {
@@ -719,10 +648,7 @@
           },
           "tipoPersona": {
             "type": "string",
-            "enum": [
-              "JURIDICA",
-              "NATURAL"
-            ]
+            "enum": ["JURIDICA", "NATURAL"]
           },
           "nit": {
             "type": "string"
@@ -735,11 +661,7 @@
           },
           "repLegalTipoDoc": {
             "type": "string",
-            "enum": [
-              "CC",
-              "CE",
-              "PASAPORTE"
-            ],
+            "enum": ["CC", "CE", "PASAPORTE"],
             "nullable": true
           },
           "repLegalNumeroDoc": {
@@ -752,11 +674,7 @@
           },
           "estado": {
             "type": "string",
-            "enum": [
-              "EN_VALIDACION",
-              "DEVUELTA",
-              "APROBADA"
-            ]
+            "enum": ["EN_VALIDACION", "DEVUELTA", "APROBADA"]
           },
           "motivoDevolucion": {
             "type": "string",
@@ -768,24 +686,14 @@
           },
           "riesgoMaximo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ]
+            "enum": ["I", "II", "III", "IV", "V"]
           },
           "totalTrabajadores": {
             "type": "number"
           },
           "estandaresAplicables": {
             "type": "number",
-            "enum": [
-              7,
-              21,
-              62
-            ]
+            "enum": [7, 21, 62]
           },
           "sedes": {
             "type": "array",
@@ -797,12 +705,17 @@
         "required": [
           "id",
           "razonSocial",
+          "nombreComercial",
           "nombreVisible",
           "tipoPersona",
           "nit",
           "digitoVerificacion",
           "repLegalNombre",
+          "repLegalTipoDoc",
+          "repLegalNumeroDoc",
+          "arlCodigo",
           "estado",
+          "motivoDevolucion",
           "enviadaEn",
           "riesgoMaximo",
           "totalTrabajadores",
@@ -822,10 +735,7 @@
             "example": "Aurora"
           }
         },
-        "required": [
-          "codigo",
-          "nombre"
-        ]
+        "required": ["codigo", "nombre"]
       },
       "TarjetaOrganizacionDto": {
         "type": "object",
@@ -840,21 +750,11 @@
           },
           "estado": {
             "type": "string",
-            "enum": [
-              "EN_VALIDACION",
-              "DEVUELTA",
-              "APROBADA"
-            ]
+            "enum": ["EN_VALIDACION", "DEVUELTA", "APROBADA"]
           },
           "riesgoMaximo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ]
+            "enum": ["I", "II", "III", "IV", "V"]
           },
           "arl": {
             "nullable": true,
@@ -870,11 +770,7 @@
           },
           "estandaresAplicables": {
             "type": "number",
-            "enum": [
-              7,
-              21,
-              62
-            ]
+            "enum": [7, 21, 62]
           },
           "porcentajeImplementacion": {
             "type": "number",
@@ -901,9 +797,13 @@
           "nombreVisible",
           "estado",
           "riesgoMaximo",
+          "arl",
           "totalTrabajadores",
           "estandaresAplicables",
-          "puedeIngresar"
+          "porcentajeImplementacion",
+          "porcentajeCumplimiento",
+          "puedeIngresar",
+          "motivoDevolucion"
         ]
       },
       "ListaOrganizacionesDto": {
@@ -920,10 +820,7 @@
             }
           }
         },
-        "required": [
-          "total",
-          "organizaciones"
-        ]
+        "required": ["total", "organizaciones"]
       },
       "CasoValidacionDto": {
         "type": "object",
@@ -950,24 +847,14 @@
           },
           "riesgoMaximo": {
             "type": "string",
-            "enum": [
-              "I",
-              "II",
-              "III",
-              "IV",
-              "V"
-            ]
+            "enum": ["I", "II", "III", "IV", "V"]
           },
           "totalTrabajadores": {
             "type": "number"
           },
           "estandaresAplicables": {
             "type": "number",
-            "enum": [
-              7,
-              21,
-              62
-            ]
+            "enum": [7, 21, 62]
           },
           "sedes": {
             "type": "number",
@@ -995,9 +882,7 @@
             "example": "El RUT no corresponde a la razón social"
           }
         },
-        "required": [
-          "motivo"
-        ]
+        "required": ["motivo"]
       },
       "DepartamentoDto": {
         "type": "object",
@@ -1011,10 +896,7 @@
             "example": "SANTANDER"
           }
         },
-        "required": [
-          "codigo",
-          "nombre"
-        ]
+        "required": ["codigo", "nombre"]
       },
       "MunicipioDto": {
         "type": "object",
@@ -1028,10 +910,7 @@
             "example": "SAN GIL"
           }
         },
-        "required": [
-          "codigo",
-          "nombre"
-        ]
+        "required": ["codigo", "nombre"]
       },
       "ActividadCiiuDto": {
         "type": "object",
@@ -1045,10 +924,7 @@
             "example": "Actividades de desarrollo de sistemas informáticos"
           }
         },
-        "required": [
-          "codigo",
-          "descripcion"
-        ]
+        "required": ["codigo", "descripcion"]
       }
     }
   }

@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+import { ApiProperty } from "@nestjs/swagger"
 
 import type { ClaseRiesgo } from "@/organizaciones/dominio/estandares-aplicables"
 import type { EstadoOrganizacion } from "@/organizaciones/dominio/transiciones"
@@ -13,16 +13,16 @@ export class TarjetaOrganizacionDto {
   nombreVisible: string
   @ApiProperty({ enum: ESTADOS }) estado: EstadoOrganizacion
   @ApiProperty({ enum: CLASES_RIESGO }) riesgoMaximo: ClaseRiesgo
-  @ApiPropertyOptional({ type: ArlDto, nullable: true }) arl: ArlDto | null
+  @ApiProperty({ type: ArlDto, nullable: true }) arl: ArlDto | null
   @ApiProperty() totalTrabajadores: number
   @ApiProperty({ enum: [7, 21, 62] }) estandaresAplicables: number
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: Number,
     nullable: true,
     description: "null = Sin evaluar mientras D2 esté en MOCK (R5.3)",
   })
   porcentajeImplementacion: number | null
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: Number,
     nullable: true,
     description: "Ídem (R5.3)",
@@ -30,7 +30,7 @@ export class TarjetaOrganizacionDto {
   porcentajeCumplimiento: number | null
   @ApiProperty({ description: "Solo true si está Aprobada (R5.4, DEC-12)" })
   puedeIngresar: boolean
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: String,
     nullable: true,
     description: "Solo si está Devuelta (R5.5)",

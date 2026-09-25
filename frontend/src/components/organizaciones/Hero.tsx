@@ -65,31 +65,34 @@ export function Hero({
         </p>
       </div>
 
-      <div className="relative z-10 w-full max-w-[280px] justify-self-end rounded-2xl border border-[#E5E9EE] bg-white px-5 py-[22px] shadow-[0_8px_24px_rgba(11,79,108,0.06)]">
-        <div className="mb-3.5 font-heading text-sm font-bold text-[#08344A]">
-          {kpiTitle}
-        </div>
-        {kpis.map((kpi, i) => (
-          <div
-            key={kpi.label}
-            className={
-              "flex items-center gap-2.5 py-2" +
-              (i > 0 ? " border-t border-[#E5E9EE]" : "")
-            }
-          >
-            <div
-              className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#F5F7FA]"
-              style={{ color: kpi.danger ? "#D32F2F" : accentColor }}
-            >
-              <HugeiconsIcon icon={kpi.icon} size={14} />
-            </div>
-            <span className="min-w-7 font-heading text-[15px] font-bold text-[#08344A]">
-              {kpi.value}
-            </span>
-            <span className="text-[12.5px] text-[#6B7280]">{kpi.label}</span>
+      {/* Sin KPIs no se muestra el cuadro (organizaciones: solo el conteo, R5.7). */}
+      {kpis.length > 0 && (
+        <div className="relative z-10 w-full max-w-[280px] justify-self-end rounded-2xl border border-[#E5E9EE] bg-white px-5 py-[22px] shadow-[0_8px_24px_rgba(11,79,108,0.06)]">
+          <div className="mb-3.5 font-heading text-sm font-bold text-[#08344A]">
+            {kpiTitle}
           </div>
-        ))}
-      </div>
+          {kpis.map((kpi, i) => (
+            <div
+              key={kpi.label}
+              className={
+                "flex items-center gap-2.5 py-2" +
+                (i > 0 ? " border-t border-[#E5E9EE]" : "")
+              }
+            >
+              <div
+                className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#F5F7FA]"
+                style={{ color: kpi.danger ? "#D32F2F" : accentColor }}
+              >
+                <HugeiconsIcon icon={kpi.icon} size={14} />
+              </div>
+              <span className="min-w-7 font-heading text-[15px] font-bold text-[#08344A]">
+                {kpi.value}
+              </span>
+              <span className="text-[12.5px] text-[#6B7280]">{kpi.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

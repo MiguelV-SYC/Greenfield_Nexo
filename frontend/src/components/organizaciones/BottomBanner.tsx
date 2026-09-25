@@ -24,7 +24,7 @@ const items = [
   },
 ]
 
-export function BottomBanner() {
+export function BottomBanner({ onAgregar }: { onAgregar?: () => void }) {
   return (
     <div className="mx-auto mt-2 max-w-[1280px] px-10">
       <div className="grid grid-cols-1 items-center gap-6 rounded-2xl border border-[#E5E9EE] bg-white px-[26px] py-[22px] md:grid-cols-[1fr_1fr_1fr_auto]">
@@ -46,6 +46,7 @@ export function BottomBanner() {
 
         <button
           type="button"
+          onClick={onAgregar}
           className="flex items-center gap-2.5 rounded-xl bg-[linear-gradient(120deg,#1C7A6B,#2CA6A4)] px-[22px] py-[13px] text-sm font-bold whitespace-nowrap text-white shadow-[0_6px_16px_rgba(44,166,164,0.28)]"
         >
           <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-white/22">

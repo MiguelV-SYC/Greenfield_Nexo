@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { LogoMark } from "@/components/login/LogoMark"
+import { guardarIdentidad, identidadDesdeUsuario } from "@/lib/api/identidad-simulada"
 
 export interface LoginCardProps {
   /** Ruta a la que navega "Ingresar". */
@@ -23,8 +24,8 @@ export interface LoginCardProps {
   buttonGradient?: string
 }
 
-// TODO: reemplazar por la llamada real de autenticación al backend.
-// Por ahora, "Ingresar" navega directo a `destination`.
+// Sin autenticación real hasta que exista `auth` (D1): "Ingresar" guarda la
+// identidad simulada y navega a `destination`.
 export function LoginCard({
   destination = "/organizaciones",
   accentColor = "#2CA6A4",
@@ -38,6 +39,9 @@ export function LoginCard({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    // MOCK de D1 (DEC-11): el usuario escrito es la identidad simulada.
+    const usuario = new FormData(event.currentTarget).get("username")
+    guardarIdentidad(identidadDesdeUsuario(typeof usuario === "string" ? usuario : ""))
     router.push(destination)
   }
 

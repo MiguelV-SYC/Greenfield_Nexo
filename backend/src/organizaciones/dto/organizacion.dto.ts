@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+import { ApiProperty } from "@nestjs/swagger"
 
 import type { ClaseRiesgo } from "@/organizaciones/dominio/estandares-aplicables"
 import type { EstadoOrganizacion } from "@/organizaciones/dominio/transiciones"
@@ -19,7 +19,7 @@ export class SedeRegistradaDto extends SedeDto {
 export class OrganizacionDto {
   @ApiProperty({ format: "uuid" }) id: string
   @ApiProperty() razonSocial: string
-  @ApiPropertyOptional({ nullable: true, type: String })
+  @ApiProperty({ nullable: true, type: String })
   nombreComercial: string | null
   @ApiProperty({
     description: "Nombre comercial o, si falta, la razón social (R1.8)",
@@ -30,14 +30,13 @@ export class OrganizacionDto {
   @ApiProperty() nit: string
   @ApiProperty() digitoVerificacion: string
   @ApiProperty() repLegalNombre: string
-  @ApiPropertyOptional({ enum: TIPOS_DOCUMENTO, nullable: true })
+  @ApiProperty({ enum: TIPOS_DOCUMENTO, nullable: true })
   repLegalTipoDoc: (typeof TIPOS_DOCUMENTO)[number] | null
-  @ApiPropertyOptional({ nullable: true, type: String })
+  @ApiProperty({ nullable: true, type: String })
   repLegalNumeroDoc: string | null
-  @ApiPropertyOptional({ nullable: true, type: String }) arlCodigo:
-    string | null
+  @ApiProperty({ nullable: true, type: String }) arlCodigo: string | null
   @ApiProperty({ enum: ESTADOS }) estado: EstadoOrganizacion
-  @ApiPropertyOptional({ nullable: true, type: String })
+  @ApiProperty({ nullable: true, type: String })
   motivoDevolucion: string | null
   @ApiProperty() enviadaEn: Date
   @ApiProperty({ enum: CLASES_RIESGO }) riesgoMaximo: ClaseRiesgo

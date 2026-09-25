@@ -6,3 +6,5 @@ pnpm-lock.yaml
 specs/
 frontend/brand/
 *.md
+frontend/src/lib/api/esquema.ts
+frontend/src/lib/api/openapi.json
