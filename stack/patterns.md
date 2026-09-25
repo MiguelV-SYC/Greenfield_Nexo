@@ -1,64 +1,92 @@
 # Patterns
 
-> **Servicio**: `<TODO: nombre del servicio>`
-> **Estado**: TODO — completar durante bootstrap
+> **Servicio**: `nexo`
+> **Estado**: completo (bootstrap 2026-09-25). Fuente: `CONTEXTO-NEXO.md` §5 y §11.
+
+## Idioma
+
+El **idioma del dominio es español**: entidades, módulos, rutas,
+DTOs, campos y nombres de tests (`Organizacion`, `EvaluacionEstandar`,
+`cumplimiento-normativo`). Los términos técnicos del framework se
+dejan como vienen (`controller`, `service`, `module`, `dto`, `guard`).
 
 ## Naming
 
 ### Archivos
 
-<!-- TODO: kebab-case / PascalCase / snake_case según convención del
-ecosistema (TS suele kebab-case, .NET PascalCase, Python snake_case,
-Go snake_case en archivos pero camelCase en código). -->
+kebab-case con el sufijo de rol de NestJS:
+`evaluacion-estandar.service.ts`, `crear-evidencia.dto.ts`. En el
+frontend, componentes en kebab-case (`matriz-cumplimiento.tsx`).
 
 ### Funciones / métodos
 
-<!-- TODO: camelCase / snake_case / PascalCase según lenguaje. -->
+camelCase: `calcularPorcentajeVerificado()`.
 
 ### Clases / tipos / interfaces
 
-<!-- TODO: PascalCase usualmente. Convenciones específicas (ej.
-prefijo `I` para interfaces en C#? sin prefijo en TS?). -->
+PascalCase, sin prefijo `I` en interfaces: `EvaluacionEstandar`,
+`AlmacenamientoArchivos`. DTOs con sufijo `Dto`:
+`ActualizarEvaluacionDto`.
 
 ### Variables / constantes
 
-<!-- TODO: camelCase / snake_case / UPPER_SNAKE_CASE para constantes. -->
+camelCase para variables; UPPER_SNAKE_CASE para constantes de módulo:
+`MAX_TAMANO_EVIDENCIA_MB`.
+
+### Base de datos
+
+Modelos Prisma en PascalCase y campos en camelCase. Toda entidad de
+negocio lleva `organizacionId`.
+
+## Tamaño y forma del código
+
+- Funciones de **40 líneas como máximo**.
+- Sin `any` (TS estricto).
+- El controller no contiene lógica de negocio.
 
 ## Imports
 
-<!-- TODO: ¿alias de path (@/ → src/)? ¿imports relativos vs
-absolutos? ¿orden (built-in, external, internal, parent, sibling)?
-¿auto-organizado por linter? -->
+- Alias `@/` → `src/` en cada paquete.
+- Orden (lo aplica ESLint): built-in, externos, internos (`@/`),
+  relativos.
+- Un módulo solo importa de otro su service exportado, nunca sus
+  archivos internos.
 
 ## Convención de commits
 
-<!-- TODO: convención del repo. La metodología recomienda:
+Sin tracker (`repo-config.yaml > trackers: []`):
 
-  <type>(<scope>): T<n> - <desc> [R<x>.<y>] AB#<workitem-id>
+```
+<type>(nexo): T<n> - <desc> [R<x>.<y>]
+```
 
-con `AB#` opcional según `repo-config.yaml > tracker`. Ver
-AGENTS.md § Convención de commits. -->
+Ejemplo: `feat(nexo): T3 - guardar estado de un estándar [R2.1, R2.4]`.
+
+Commits fuera de una spec (tooling, bootstrap): `chore: <desc>`.
 
 ## Branching
 
-<!-- TODO: viene de `repo-config.yaml > environments` +
-`promotion_path`. Worktree por feature (`feat/<slug>`) según §6
-*Worktree, ramas y flujo de promoción* del methodology. -->
+- Feature: `feat/<slug>` desde `main`, un worktree por feature.
+- Ambientes: `pruebas → qa → main` (`repo-config.yaml >
+  promotion_path`). Sin `--force` sobre ramas de ambiente.
 
 ## Organización de tests
 
-<!-- TODO: estructura (co-located `foo.ts` + `foo.test.ts`, vs
-separate dir `tests/`), naming (`*.test.ts` / `*_test.go` /
-`test_*.py`), convención `// Derived from R*.*`. Ver stack/testing.md
-para detalle de política. -->
+- Unit: co-located, `<archivo>.spec.ts` junto al archivo que prueban.
+- HTTP/e2e del backend: `backend/test/<modulo>.e2e-spec.ts`.
+- Cada test lleva `// Derived from R<x>.<y>` (ver `stack/testing.md`).
 
 ## Logging
 
-<!-- TODO: framework, niveles (debug/info/warn/error), formato
-(estructurado JSON vs texto), qué NO loguear (PII, secrets). Cruzar
-con stack/security.md. -->
+- **nestjs-pino**, en JSON estructurado.
+- **Prohibido `console.log`** (lo bloquea ESLint).
+- Niveles: `debug` (desarrollo), `info` (eventos de negocio), `warn`,
+  `error`.
+- Cada línea de log lleva `organizacionId` y el id de la petición.
+- No se loguean contraseñas, tokens ni datos personales (ver
+  `stack/security.md`).
 
 ## Error reporting
 
-<!-- TODO: ¿Sentry / Datadog / Application Insights / propio? Cómo
-se reportan errores no manejados, política de breadcrumbs. -->
+Por ahora, logs de error de pino. La herramienta de error tracking se
+decide junto con el deploy target (`repo-config.yaml > runtime`).

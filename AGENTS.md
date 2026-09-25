@@ -17,21 +17,21 @@
 
 > Instrucciones canónicas para el Service Agent de este repo.
 >
-> **Estado de este repo**: starter template. Antes de empezar a generar
-> código, completa los archivos de `stack/` (ver §Bootstrap). El Service
-> Agent **no debe** generar código de producción mientras `stack/` esté
-> incompleto: la spec necesita un stack definido para producir un
-> `design.md` no-genérico.
+> **Estado de este repo**: bootstrap completo (2026-09-25). `stack/` y
+> `repo-config.yaml` están llenos a partir de `CONTEXTO-NEXO.md`. Los
+> `OPEN_QUESTION` que quedan dependen del deploy target, de jurídica o del
+> owner, y no bloquean el desarrollo local. El código sigue exigiendo una
+> spec aprobada en `specs/<modulo>/`.
 
 ---
 
 ## Project
 
 **Service**: `nexo`
-**Owner**: `TBD` (lead: `TBD`)
+**Owner**: `TBD` (lead: `TBD`) — OPEN_QUESTION. Revisor de negocio: Kevin Arley
 **Initiative**: `NONE`
-**Stack**: ver `stack/tech-stack.md`
-**Runtime**: ver `stack/tech-stack.md`
+**Stack**: monorepo pnpm — `backend/` NestJS 12 + Prisma 7 + PostgreSQL 16; `frontend/` Next.js 16 + React 19. Detalle en `stack/tech-stack.md`
+**Runtime**: Node.js 24 (ver `stack/tech-stack.md`)
 **Deploy target**: TBD (deploy target sin decidir — ver `stack/tech-stack.md` § Deploy target)
 **Repo config**: `repo-config.yaml` (`repo_type`, `trackers[]` con `role` (owner/stakeholder/qa), `environments`, `promotion_path` — §6 *Configuración del repo* del methodology)
 **On-call**: TBD

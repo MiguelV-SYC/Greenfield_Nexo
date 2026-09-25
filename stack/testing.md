@@ -1,35 +1,42 @@
 # Testing
 
-> **Servicio**: `<TODO: nombre del servicio>`
-> **Estado**: TODO — completar durante bootstrap
+> **Servicio**: `nexo`
+> **Estado**: completo (bootstrap 2026-09-25). Fuente: `CONTEXTO-NEXO.md` §4 y §11.
 
 ## Niveles obligatorios
 
-<!-- TODO: ¿cuáles de unit / integration / e2e / contract / load /
-accessibility / security se exigen para cada feature? Cada `R*.*`
-en `requirements.md` declara qué niveles lo cubren. -->
+| Nivel | Cuándo | Herramienta |
+|---|---|---|
+| **Unit** | Todo service y toda lógica de dominio (cálculo de indicadores, % verificado, estándares aplicables según la Res. 0312) | Jest |
+| **Integración HTTP** | Todo endpoint: validación, permisos por rol y aislamiento entre organizaciones | Jest + Supertest contra Postgres real |
+| **Componentes (frontend)** | Componentes con lógica: matriz editable, formularios | Jest + React Testing Library |
+
+- **Aislamiento multi-tenant**: toda feature con endpoints tiene al
+  menos un test que intenta acceder a datos de otra organización y
+  comprueba que falla.
+- E2E de navegador: no se exige en v1.
 
 ## Cobertura mínima
 
-<!-- TODO: ¿% por nivel? Ej. unit ≥ 80%, integration ≥ 60%, e2e ≥
-"flujos críticos cubiertos" (no porcentaje sino lista). NO usar
-exclusions del coverage para inflar el % — declarar qué se excluye
-y por qué. -->
+**≥ 80 %** de líneas, por paquete (`backend/` y `frontend/`). Solo se
+excluye del cálculo: `main.ts`, módulos `*.module.ts`, DTOs sin
+lógica, código generado (cliente Prisma, tipos OpenAPI) y
+`prisma/migrations/`. Cualquier otra exclusión se justifica en el
+`design.md` de la spec.
 
 ## Frameworks
 
-<!-- TODO: unit (vitest/jest/pytest/junit/go test), integration (lo
-mismo o testcontainers), e2e (playwright/cypress/selenium), contract
-(pact/spring cloud contract), load (k6/locust/gatling), accessibility
-(axe-core). Cruzar con `stack/tech-stack.md`. -->
+- Jest en ambos paquetes (runner y cobertura).
+- Supertest para HTTP en el backend.
+- React Testing Library para componentes del frontend.
 
 ## Convención `// Derived from R*.*`
 
 Cada test debe declarar el `R*.*` que cubre como comment al inicio:
 
-```
-// Derived from R1.2 (token entropy)
-test('reset token has 256 bits of entropy', () => { ... });
+```ts
+// Derived from R2.3 (% verificado excluye estándares "No aplica")
+it('calcula el % verificado solo sobre estándares aplicables', () => { ... });
 ```
 
 Esto permite a `/spec-verify` cruzar tests ↔ requirements y detectar
@@ -38,25 +45,33 @@ cobertura.
 
 ## Política de mocks
 
-<!-- TODO: cuándo usar mocks (D-N no LIVE, 3rd party como Stripe),
-cuándo NO (propia DB → testcontainer, propia lib → import directo).
-Cruzar con §6 *Mocks como ciudadanos de primera clase* del methodology
-y la regla *Ready to unmock*. -->
+- **Base de datos propia**: no se mockea en integración. Los tests
+  corren contra el Postgres de Compose, con una base de datos de test
+  que se limpia entre suites.
+- **Unit**: se mockean las dependencias del service (otros services,
+  Prisma) con `overrideProvider`.
+- **Integraciones externas** (MinIO, correo, PDF): doble del puerto.
+  MinIO de Compose en integración.
+- **D-N no LIVE**: mock según la regla *Ready to unmock* del
+  methodology.
 
 ## Estructura de archivos
 
-<!-- TODO: co-located (`src/foo.ts` + `src/foo.test.ts`) vs separate
-dir (`tests/`). Naming exacto de archivos. -->
+- Unit: co-located, `<archivo>.spec.ts`.
+- Integración HTTP: `backend/test/<modulo>.e2e-spec.ts`.
+- Componentes: co-located, `<componente>.spec.tsx`.
+- Los nombres de los tests se escriben en español.
 
 ## TDD vs test-after
 
-<!-- TODO: política. La metodología (§4 Fase 4) recomienda **tests
-primero** (TDD) cuando hay lógica de negocio compleja; test-after es
-aceptable para boilerplate. `/spec-implement` aplica tests primero
-por default — declarar excepciones explícitas. -->
+Tests primero en la lógica de dominio (indicadores, % verificado,
+estándares aplicables, permisos). Test-after aceptado para
+boilerplate (módulos, DTOs, wiring). `/spec-implement` aplica tests
+primero por defecto.
 
 ## CI gates de tests
 
-<!-- TODO: qué pipelines corren qué niveles, en qué momento del
-flujo (PR / pre-merge / pre-deploy). Cruzar con
-`repo-config.yaml > environments[].gate`. -->
+- En PR: lint, unit, integración y cobertura ≥ 80 %.
+- OPEN_QUESTION: plataforma de CI. Se decide junto con el deploy
+  target. Mientras tanto se ejecuta en local con `pnpm test` antes de
+  abrir el PR.

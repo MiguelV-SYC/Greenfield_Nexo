@@ -14,7 +14,18 @@
 # frontend-app   : app web/SPA con previews por PR
 # infra          : terraform / helm / pulumi (sandbox + prod típicamente)
 # custom         : declarar environments y deploy_trigger manualmente
-repo_type: service
+#
+# Nexo es un monorepo (pnpm workspaces): `backend/` (NestJS, monolito
+# modular) + `frontend/` (Next.js). No encaja en un solo tipo, así que
+# es `custom` con los ambientes del default de `service` declarados
+# abajo a mano. Decidido en el bootstrap del 2026-09-25.
+repo_type: custom
+
+# Ramas de feature (D5): default AI-DLC.
+branch_pattern: "feat/<slug>"
+
+# OPEN_QUESTION: owner team, lead y on-call sin definir (D7).
+# Revisor de negocio: Kevin Arley (CONTEXTO-NEXO.md §10).
 
 # ─── Trackers de work items (v0.17 multi-tracker) ────────────────────
 # trackers: lista de uno o más trackers, cada uno con `role`.
@@ -177,6 +188,9 @@ promotion_path: [pruebas, qa, main]
 # static-host    : Vercel / Netlify / S3+CloudFront
 # none           : repo no se despliega (`docs-only`, `catalog-only`)
 runtime:
+  # OPEN_QUESTION: destino de despliegue sin decidir. Resolver antes de
+  # la primera feature que requiera deploy real a `pruebas`. Mientras
+  # tanto solo existe la infra local con Compose (stack/tech-stack.md).
   type: TBD                            # sin decidir — ver stack/tech-stack.md § Deploy target
   # cluster: ocp-eu-west-1
   # namespace_pattern: "{service}-{env}"

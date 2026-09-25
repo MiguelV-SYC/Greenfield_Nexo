@@ -1,7 +1,7 @@
 # Tech stack
 
-> **Servicio**: `<TODO: nombre del servicio>`
-> **Estado**: TODO — completar durante bootstrap (ver AGENTS.md § Bootstrap)
+> **Servicio**: `nexo`
+> **Estado**: completo (bootstrap 2026-09-25). Fuente: `CONTEXTO-NEXO.md` §4.
 
 > El Service Agent se **negará a generar código** mientras este archivo
 > tenga un `TODO` **que no cuelgue de nada** — lenguaje, framework,
@@ -17,38 +17,81 @@
 
 ## Lenguaje y framework
 
-<!-- TODO: ¿Qué lenguaje (TS, Python, Go, Rust, Kotlin, .NET, etc.)?
-¿Qué framework principal (Next.js, FastAPI, Spring, Actix, etc.)?
-Versiones específicas. -->
+TypeScript en modo `strict` en todo el monorepo.
+
+| Paquete | Framework | Notas |
+|---|---|---|
+| `backend/` | **NestJS 12** sobre **Node.js 24** | API REST y cálculo centralizado de indicadores. Swagger (`@nestjs/swagger`) obligatorio en cada endpoint |
+| `frontend/` | **Next.js 16** (App Router, RSC) + **React 19** | Base visual obligatoria: `nexo-design-kit` |
+
+Librerías de frontend:
+
+| Uso | Librería |
+|---|---|
+| Estilos / UI | Tailwind CSS 4 + design system V5 (`src/styles/nexo-v5.css`) + shadcn (`base-mira`) + Hugeicons. Tipografías Inter, Inter Tight y JetBrains Mono |
+| Cuadrícula interactiva | TanStack Table v8 (recomendada; decisión abierta, ver `stack/architecture.md` § ADRs) |
+| Gráficas | Chart.js 4 (mismo motor que el mockup aprobado) |
+| Formularios / validación | React Hook Form + Zod |
+| Cliente HTTP | `fetch` o Axios con tipos generados desde el OpenAPI de cada spec |
+
+Librerías de backend:
+
+| Uso | Librería |
+|---|---|
+| Auth | JWT: `@nestjs/jwt` + Passport |
+| Colas | BullMQ sobre Redis (recálculo de indicadores, exportaciones pesadas) |
+| Excel | ExcelJS (importación inicial de la matriz y exportación) |
+| Logs | nestjs-pino |
 
 ## Persistencia
 
-<!-- TODO: ¿Base de datos (Postgres, MySQL, MongoDB, DynamoDB, etc.)?
-¿ORM o query builder (Prisma, SQLAlchemy, Entity Framework, GORM)?
-¿Cache (Redis, Memcached)? Versiones. -->
+| Componente | Tecnología |
+|---|---|
+| Base de datos | **PostgreSQL 16**, única y compartida entre organizaciones (multi-tenant por `organizacionId`) |
+| ORM | **Prisma 7** |
+| Caché / colas | **Redis 7** |
+| Archivos (evidencias) | **MinIO**, compatible con S3, detrás de un puerto de almacenamiento |
 
 ## Build y package manager
 
-<!-- TODO: package manager (pnpm/npm/yarn, pip/poetry, cargo, maven,
-gradle, etc.), bundler/build tool si aplica, lockfile a commitear. -->
+- **pnpm** con workspaces: `backend/` y `frontend/` son paquetes del
+  workspace raíz. Se commitea `pnpm-lock.yaml`.
+- Build: `nest build` (backend) y `next build` (frontend).
 
 ## Tests
 
-<!-- TODO: framework de tests (vitest, jest, pytest, junit, go test,
-etc.). Detalle de política en stack/testing.md. -->
+Jest en ambos paquetes; Supertest para las pruebas HTTP del backend.
+La política está en `stack/testing.md`.
 
 ## Lint y formato
 
-<!-- TODO: linter (eslint/ruff/golangci-lint/clippy), formatter
-(prettier/black/gofmt/rustfmt), pre-commit hooks si aplica. -->
+- ESLint + `eslint-plugin-sonarjs` y Prettier en ambos paquetes.
+- SonarQube Community: opcional, local (ver infra local).
+
+## Infra local
+
+Podman / Docker Compose con `postgres`, `redis` y `minio`. SonarQube,
+si se levanta, va en otro puerto porque MinIO ya usa el 9000.
 
 ## Deploy target
 
-<!-- TODO: OpenShift / Kubernetes / Vercel / AWS Lambda / static host
-(S3+CloudFront, Cloudflare Pages) / npm registry (para library) / etc.
-Cruzar con `repo-config.yaml > runtime.type`. -->
+**TBD** (`repo-config.yaml > runtime.type`). Hasta que se decida, solo
+existe la infra local con Compose. Se resuelve antes de la primera
+feature que requiera desplegar a `pruebas`.
 
 ## Versiones pineadas
 
-<!-- TODO: versiones de runtime y librerías críticas para evitar drift.
-Ej. Node 22.x, .NET 9.0, Python 3.13, etc. -->
+| Componente | Versión |
+|---|---|
+| Node.js | 24.x (fijado en `.nvmrc` y `engines`) |
+| NestJS | 12.x |
+| Next.js | 16.x |
+| React | 19.x |
+| Prisma | 7.x |
+| PostgreSQL | 16 |
+| Redis | 7 |
+| Tailwind CSS | 4.x |
+| TanStack Table | 8.x |
+| Chart.js | 4.x |
+
+Las versiones exactas quedan fijadas por `pnpm-lock.yaml`.
