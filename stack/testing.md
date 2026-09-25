@@ -12,6 +12,7 @@
 | **Componentes (frontend)** | Componentes con lógica: matriz editable, formularios | Jest + React Testing Library |
 | **E2E de navegador** | Todo `R*.*` que declare `Tests: e2e`: flujos de usuario completos contra backend real | Playwright |
 | **Carga** | Todo NFR que declare `Tests: load`, con el umbral del NFR como criterio de aprobación | k6 |
+| **Accesibilidad** | Todo `R*.*`/NFR que declare `Tests: accessibility`: cero violaciones `serious` o `critical` | `@axe-core/playwright` dentro de los E2E |
 
 - **Aislamiento multi-tenant**: toda feature con endpoints tiene al
   menos un test que intenta acceder a datos de otra organización y

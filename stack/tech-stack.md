@@ -62,10 +62,11 @@ Librerías de backend:
 ## Tests
 
 - Jest en ambos paquetes; Supertest para las pruebas HTTP del backend.
-- **Playwright** para E2E de navegador en `frontend/`.
+- **Playwright** para E2E de navegador en `frontend/`, con
+  `@axe-core/playwright` para accesibilidad.
 - **k6** para pruebas de carga de los NFR de rendimiento.
 
-Playwright y k6 se aprobaron el 2026-09-25 en la spec `organizaciones`.
+Playwright, `@axe-core/playwright` y k6 se aprobaron el 2026-09-25 en la spec `organizaciones`.
 La política está en `stack/testing.md`.
 
 ## Lint y formato

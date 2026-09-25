@@ -328,6 +328,16 @@ las sedes (I < II < III < IV < V).
          estándares aplicables.
          Tests: integration
 
+**R5.10** WHILE se cargan "Mis organizaciones", la cola de validación o
+          los catálogos del asistente, THE SYSTEM SHALL mostrar un
+          indicador de carga.
+          Tests: unit
+
+**R5.11** IF falla la carga de "Mis organizaciones", de la cola de validación
+          o de un catálogo del asistente, THEN THE SYSTEM SHALL mostrar un
+          mensaje de error con la opción de reintentar.
+          Tests: unit, e2e
+
 ### R6 — Aislamiento y auditoría [P1]
 
 **R6.1** IF un Líder SST intenta consultar o modificar una organización
@@ -443,6 +453,12 @@ las sedes (I < II < III < IV < V).
          Tests: none — se verifica con la política de retención del
          almacenamiento en design.md; no es automatizable en un test.
 
+**NFR6** THE SYSTEM SHALL cumplir WCAG 2.1 AA en las pantallas de este
+         módulo (Mis organizaciones, asistente de registro, cola de
+         validación y Configuración): cero violaciones de impacto
+         `serious` o `critical` según axe-core.
+         Tests: accessibility
+
 ## Dependencies
 
 <!-- Omitir si no hay dependencias externas. Formato D-N (§6):
@@ -495,6 +511,14 @@ las sedes (I < II < III < IV < V).
 - **Mock**: `mocks/arl.mock.json` — las 6 del mockup V5 (Aurora, Sura, Positiva, Colmena, Bolívar, Liberty)
 - **Ready to unmock**: Kevin Arley confirma la lista de ARL vigentes y queda registrada en esta spec
 
+### D6 — Concepto jurídico sobre la Ley 1581 de 2012
+- **Tipo**: humana
+- **Estado**: NEGOTIATING
+- **Contrato**: concepto escrito de jurídica sobre la retención de 20 años (NFR5, R7.8) frente a los derechos de supresión de datos personales — por registrar
+- **Owner**: Jurídica / @MiguelV-SYC (gestiona la solicitud)
+- **Estrategia**: BLOCK — P2 se construye y se prueba con datos ficticios; **no se cargan documentos reales del piloto** hasta tener el concepto
+- **Ready to unmock**: N/A (BLOCK). Se desbloquea cuando el concepto quede registrado en esta spec y, si ajusta la retención o el borrado, con su `/spec-amend`
+
 ## Fuera de scope
 
 - Crear líderes de apoyo y practicantes y asignarles permisos: es del
@@ -532,6 +556,8 @@ las sedes (I < II < III < IV < V).
 - Q: (/spec-clarify) ¿Contra qué estados se rechaza un NIT duplicado (R1.7)? → A: Contra organizaciones en cualquier estado: un NIT corresponde a una sola organización en Nexo. Un segundo líder se vincula después por el módulo `accesos`.
 - Q: (/spec-clarify) ¿Tamaño máximo por archivo de un documento legal? → A: 10 MB; si se supera, se rechaza indicando el límite (R7.9 nuevo).
 - Q: (/spec-clarify) ¿Se puede editar el NIT de una organización aprobada? → A: No. El NIT y el dígito de verificación solo se corrigen mientras está Devuelta (R4.6); en una Aprobada se rechaza el cambio (R8.6 nuevo). Corregir un NIT ya aprobado queda fuera de v1.
+- Q: (revisión G2) ¿Cómo se cubren los estados de carga y error y la accesibilidad (CHK-025)? → A: R5.10 (indicador de carga), R5.11 (error con reintento) y NFR6 (WCAG 2.1 AA, verificado con axe-core); `@axe-core/playwright` aprobado como dependencia.
+- Q: (revisión G2) ¿Cómo se cierra la compatibilidad con la Ley 1581 (CHK-022) sin dejar una pregunta abierta? → A: D6 con estrategia BLOCK: P2 se construye con datos ficticios y no se cargan documentos reales del piloto hasta tener el concepto de jurídica.
 
 ## OPEN_QUESTIONS
 

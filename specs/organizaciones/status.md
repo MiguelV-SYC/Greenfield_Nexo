@@ -58,6 +58,7 @@ D2 (% implementación y % cumplimiento — cumplimiento-normativo): NEGOTIATING
 D3 (catálogo DIVIPOLA): NEGOTIATING
 D4 (catálogo CIIU): NEGOTIATING
 D5 (catálogo de ARL vigentes): NEGOTIATING
+D6 (concepto jurídico Ley 1581 — BLOCK sobre datos reales del piloto): NEGOTIATING
 
 ## Notas
 

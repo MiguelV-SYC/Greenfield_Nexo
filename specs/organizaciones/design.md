@@ -97,9 +97,9 @@ flowchart LR
 | `backend/src/common/tenant/` | Extensión de Prisma que abre cada operación en una transacción con `set_config` de las variables de sesión que leen las políticas RLS | R6.1, NFR3, DEC-1 |
 | `backend/src/common/auditoria/` | Servicio append-only sobre `AuditoriaCambio` | R6.3, R6.4, R8.4, NFR4 |
 | `backend/src/infra/almacenamiento/` (P2) | Puerto `AlmacenamientoArchivos` + adaptador MinIO | R7.2–R7.8, NFR5 |
-| `frontend/src/app/organizaciones/` | "Mis organizaciones" con datos reales, estado vacío, conteo y motivo de devolución | R5.1–R5.7 |
+| `frontend/src/app/organizaciones/` | "Mis organizaciones" con datos reales, estados vacío, de carga y de error, conteo y motivo de devolución | R5.1–R5.7, R5.10, R5.11 |
 | `frontend/src/components/organizaciones/asistente/` | Asistente de 3 pasos portado de `#modal-nueva-organizacion` (paso 3 en P2) | R1.*, R2.*, R3.6, R7.* |
-| `frontend/src/app/admin/validacion/` | Cola de validación y detalle con Aprobar / Devolver | R5.8, R5.9, R4.3–R4.5 |
+| `frontend/src/app/admin/validacion/` | Cola de validación y detalle con Aprobar / Devolver, con estados de carga y error | R5.8–R5.11, R4.3–R4.5 |
 | `frontend/src/app/sgsst/config/` (P3) | Sección de datos generales, sedes y documentos de `#view-config`, editable | R8.* |
 
 ## Modelo de datos
@@ -348,6 +348,13 @@ de estándares es síncrono y trivial (R3.5).
     (rechazada: emitir el contexto de sesión es responsabilidad de
     `auth`, y duplicaría ese flujo).
 
+- **DEC-13**: la accesibilidad (NFR6) se verifica con
+  `@axe-core/playwright` dentro de los E2E de cada pantalla del
+  módulo, fallando ante violaciones `serious` o `critical`. Los
+  componentes del kit se usan tal cual; si axe reporta una violación
+  en una primitiva V5, se corrige en la primitiva, no en la pantalla —
+  justifica NFR6.
+
 ## Complejidad justificada
 
 | Qué | Por qué es necesario | Alternativa más simple rechazada porque |
@@ -383,6 +390,7 @@ S3/MinIO, que se aprueba al llegar a P2:
 | `@testing-library/react`, `@testing-library/jest-dom` | Tests de componentes del frontend | Sí (`stack/testing.md`) |
 | `@playwright/test` | E2E de navegador (R3.6, R5.2, R5.4, R5.6) | Sí — aprobado 2026-09-25 |
 | k6 (binario, no paquete npm) | Carga (NFR1, NFR2) | Sí — aprobado 2026-09-25 |
+| `@axe-core/playwright` | Accesibilidad WCAG 2.1 AA dentro de los E2E (NFR6) | Sí — aprobado 2026-09-25 |
 | Frontend: las del `package.json` del kit (Next 16, React 19, Tailwind 4, Chart.js, three, simplex-noise, Hugeicons, shadcn) | Base visual aprobada | Sí, salvo `three` y `simplex-noise`, que vienen con el kit aprobado |
 
 ### Configuración
@@ -421,9 +429,11 @@ S3/MinIO, que se aprueba al llegar a P2:
     archivo), no por extensión ni por `Content-Type` del cliente;
     límite de 10 MB antes de leer el cuerpo completo (R7.3, R7.9).
   - *Mock de identidad en producción* → el arranque falla (DEC-11).
-- **Pendiente fuera de esta feature**: la aplicación de la Ley 1581 de
-  2012 sigue abierta en `stack/security.md` y debe resolverse antes de
-  cargar datos reales del piloto (CHK-022).
+- **Ley 1581 de 2012**: declarada como D6 con estrategia BLOCK. P2 se
+  construye y prueba con datos ficticios; no se cargan documentos
+  reales del piloto hasta tener el concepto de jurídica. Si el
+  concepto ajusta la retención o el borrado, cambia DEC-3 vía
+  `/spec-amend`.
 
 ## Observabilidad
 
