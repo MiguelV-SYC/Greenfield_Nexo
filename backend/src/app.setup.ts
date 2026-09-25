@@ -2,6 +2,8 @@ import { type INestApplication, ValidationPipe } from "@nestjs/common"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import { Logger } from "nestjs-pino"
 
+import { crearExcepcionValidacion } from "@/common/validacion/errores-validacion"
+
 export const PREFIJO_API = "api/v1"
 
 export function configurarAplicacion(app: INestApplication): void {
@@ -12,6 +14,7 @@ export function configurarAplicacion(app: INestApplication): void {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: crearExcepcionValidacion,
     }),
   )
 
