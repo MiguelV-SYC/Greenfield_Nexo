@@ -20,6 +20,8 @@ dist/
 build/
 coverage/
 *.tsbuildinfo
+# Cliente de Prisma generado (`pnpm generar`)
+backend/src/generated/
 
 # Playwright
 test-results/

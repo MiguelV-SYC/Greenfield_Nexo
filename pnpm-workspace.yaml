@@ -1,3 +1,10 @@
 packages:
   - backend
   - frontend
+
+# Solo estos paquetes pueden ejecutar scripts de instalación: descargan el
+# motor de migraciones de Prisma. El resto (p. ej. telemetría de @scarf/scarf)
+# queda bloqueado.
+onlyBuiltDependencies:
+  - "@prisma/engines"
+  - prisma

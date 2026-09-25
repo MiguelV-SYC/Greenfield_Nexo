@@ -14,7 +14,7 @@ services:
       NEXO_MIGRADOR_PASSWORD: ${NEXO_MIGRADOR_PASSWORD:?definir NEXO_MIGRADOR_PASSWORD en .env}
       NEXO_APP_PASSWORD: ${NEXO_APP_PASSWORD:?definir NEXO_APP_PASSWORD en .env}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres-datos:/var/lib/postgresql/data
       - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro,z

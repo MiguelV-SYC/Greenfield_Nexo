@@ -1,0 +1,151 @@
+// Modelo de datos de Nexo. Ver specs/organizaciones/design.md § Modelo de datos.
+// Las restricciones que Prisma no expresa (CHECK, grants, RLS) viven en el
+// SQL de cada migración.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EstadoOrganizacion {
+  EN_VALIDACION
+  DEVUELTA
+  APROBADA
+}
+
+enum TipoPersona {
+  JURIDICA
+  NATURAL
+}
+
+enum TipoDocumento {
+  CC
+  CE
+  PASAPORTE
+}
+
+enum ClaseRiesgo {
+  I
+  II
+  III
+  IV
+  V
+}
+
+// accesos agregará LIDER_APOYO y PRACTICANTE (design.md, V5).
+enum RolOrganizacion {
+  LIDER_SST
+}
+
+model Organizacion {
+  id                   String                @id @default(uuid()) @db.Uuid
+  razonSocial          String
+  nombreComercial      String?
+  tipoPersona          TipoPersona           @default(JURIDICA)
+  nit                  String                @unique
+  digitoVerificacion   String                @db.Char(1)
+  repLegalNombre       String
+  repLegalTipoDoc      TipoDocumento?
+  repLegalNumeroDoc    String?
+  apoderadoNombre      String?
+  arlCodigo            String?
+  estado               EstadoOrganizacion    @default(EN_VALIDACION)
+  motivoDevolucion     String?
+  enviadaEn            DateTime              @db.Timestamptz(3)
+  riesgoMaximo         ClaseRiesgo
+  totalTrabajadores    Int
+  estandaresAplicables Int
+  creadaEn             DateTime              @default(now()) @db.Timestamptz(3)
+  actualizadaEn        DateTime              @updatedAt @db.Timestamptz(3)
+  arl                  Arl?                  @relation(fields: [arlCodigo], references: [codigo])
+  sedes                Sede[]
+  miembros             MiembroOrganizacion[]
+
+  @@index([estado, enviadaEn])
+}
+
+model Sede {
+  id                 String        @id @default(uuid()) @db.Uuid
+  organizacionId     String        @db.Uuid
+  nombre             String
+  direccion          String
+  departamentoCodigo String
+  municipioCodigo    String
+  claseRiesgo        ClaseRiesgo
+  trabajadores       Int
+  ciiuCodigo         String
+  organizacion       Organizacion  @relation(fields: [organizacionId], references: [id])
+  municipio          Municipio     @relation(fields: [municipioCodigo, departamentoCodigo], references: [codigo, departamentoCodigo])
+  actividad          ActividadCiiu @relation(fields: [ciiuCodigo], references: [codigo])
+
+  @@index([organizacionId])
+}
+
+model MiembroOrganizacion {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizacionId String          @db.Uuid
+  usuarioId      String
+  rol            RolOrganizacion
+  creadoEn       DateTime        @default(now()) @db.Timestamptz(3)
+  organizacion   Organizacion    @relation(fields: [organizacionId], references: [id])
+
+  @@unique([organizacionId, usuarioId])
+  @@index([usuarioId])
+}
+
+model AuditoriaCambio {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizacionId String   @db.Uuid
+  usuarioId      String
+  entidad        String
+  entidadId      String
+  accion         String
+  valorAnterior  Json?
+  valorNuevo     Json?
+  motivo         String?
+  creadoEn       DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([organizacionId, creadoEn])
+}
+
+// Catálogos globales (sin organizacionId ni RLS), de solo lectura para la
+// aplicación. Se siembran desde prisma/catalogos/*.json (DEC-7).
+model Departamento {
+  codigo     String      @id
+  nombre     String
+  municipios Municipio[]
+}
+
+model Municipio {
+  codigo             String       @id
+  nombre             String
+  departamentoCodigo String
+  departamento       Departamento @relation(fields: [departamentoCodigo], references: [codigo])
+  sedes              Sede[]
+
+  @@unique([codigo, departamentoCodigo])
+  @@index([departamentoCodigo])
+}
+
+model ActividadCiiu {
+  codigo      String @id
+  descripcion String
+  sedes       Sede[]
+}
+
+model Arl {
+  codigo         String         @id
+  nombre         String
+  organizaciones Organizacion[]
+}
+
+model CatalogoVersion {
+  catalogo   String   @id
+  version    String
+  fechaCorte DateTime @db.Date
+}

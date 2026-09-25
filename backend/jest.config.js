@@ -3,6 +3,7 @@ const base = {
   rootDir: ".",
   transform: { "^.+\.(t|j)s$": "ts-jest" },
   moduleNameMapper: { "^@/(.*)$": "<rootDir>/src/$1" },
+  resolver: "<rootDir>/jest.resolver.js",
   testEnvironment: "node",
 }
 
@@ -15,6 +16,8 @@ module.exports = {
       ...base,
       displayName: "integracion",
       testRegex: "test/.*\.e2e-spec\.ts$",
+      globalSetup: "<rootDir>/test/utilidades/migrar-base-pruebas.ts",
+      setupFiles: ["<rootDir>/test/utilidades/configurar-entorno.ts"],
     },
   ],
   collectCoverageFrom: [
@@ -23,6 +26,7 @@ module.exports = {
     "!src/main.ts",
     "!src/**/*.module.ts",
     "!src/**/dto/**",
+    "!src/generated/**",
   ],
   coverageDirectory: "./coverage",
   coverageThreshold: { global: { lines: 80 } },

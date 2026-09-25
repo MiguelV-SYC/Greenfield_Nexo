@@ -49,7 +49,7 @@ Librerías de backend:
 | Componente | Tecnología |
 |---|---|
 | Base de datos | **PostgreSQL 16**, única y compartida entre organizaciones (multi-tenant por `organizacionId`) |
-| ORM | **Prisma 7** |
+| ORM | **Prisma 7** con el driver adapter `@prisma/adapter-pg` + `pg` (obligatorio en Prisma 7; aprobado 2026-09-25). El cliente se genera en `backend/src/generated/prisma` y no se versiona |
 | Caché / colas | **Redis 7** |
 | Archivos (evidencias) | **MinIO**, compatible con S3, detrás de un puerto de almacenamiento |
 
