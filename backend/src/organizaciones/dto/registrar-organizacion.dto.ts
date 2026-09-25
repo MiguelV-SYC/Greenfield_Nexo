@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { Transform, Type } from "class-transformer"
+import { Type } from "class-transformer"
 import {
   ArrayMinSize,
   IsArray,
@@ -14,17 +14,12 @@ import {
   ValidateNested,
 } from "class-validator"
 
+import { Recortar } from "@/common/validacion/recortar"
 import type { ClaseRiesgo } from "@/organizaciones/dominio/estandares-aplicables"
 import { CLASES_RIESGO } from "./estandares.dto"
 
 export const TIPOS_PERSONA = ["JURIDICA", "NATURAL"] as const
 export const TIPOS_DOCUMENTO = ["CC", "CE", "PASAPORTE"] as const
-
-/** Recorta espacios para que un texto en blanco cuente como vacío (R1.1, R2.2). */
-const Recortar = () =>
-  Transform(({ value }: { value: unknown }) =>
-    typeof value === "string" ? value.trim() : value,
-  )
 
 const TEXTO_MAXIMO = 200
 
