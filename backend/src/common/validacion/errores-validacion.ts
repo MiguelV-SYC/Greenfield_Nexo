@@ -24,9 +24,16 @@ export function aplanarErrores(
 export function crearExcepcionValidacion(
   errores: ValidationError[],
 ): BadRequestException {
+  return excepcionDeCampos(aplanarErrores(errores))
+}
+
+/** Misma respuesta 400 para reglas que valida el servicio (DV, catálogos). */
+export function excepcionDeCampos(
+  errores: ErrorDeCampo[],
+): BadRequestException {
   return new BadRequestException({
     statusCode: 400,
     message: "Datos inválidos",
-    errores: aplanarErrores(errores),
+    errores,
   })
 }
