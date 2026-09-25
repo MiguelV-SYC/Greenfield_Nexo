@@ -1,7 +1,26 @@
-import type { Organizacion, Sede } from "@/generated/prisma/client"
+import type { Arl, Organizacion, Sede } from "@/generated/prisma/client"
 import type { OrganizacionDto, SedeRegistradaDto } from "./dto/organizacion.dto"
+import type { TarjetaOrganizacionDto } from "./dto/tarjeta-organizacion.dto"
 
 export type OrganizacionConSedes = Organizacion & { sedes: Sede[] }
+export type OrganizacionConArl = Organizacion & { arl: Arl | null }
+
+/** R5.2–R5.5. Los porcentajes llegan con cumplimiento-normativo (D2, MOCK). */
+export function aTarjeta(o: OrganizacionConArl): TarjetaOrganizacionDto {
+  return {
+    id: o.id,
+    nombreVisible: nombreVisible(o),
+    estado: o.estado,
+    riesgoMaximo: o.riesgoMaximo,
+    arl: o.arl ? { codigo: o.arl.codigo, nombre: o.arl.nombre } : null,
+    totalTrabajadores: o.totalTrabajadores,
+    estandaresAplicables: o.estandaresAplicables,
+    porcentajeImplementacion: null,
+    porcentajeCumplimiento: null,
+    puedeIngresar: o.estado === "APROBADA",
+    motivoDevolucion: o.estado === "DEVUELTA" ? o.motivoDevolucion : null,
+  }
+}
 
 export function nombreVisible(
   o: Pick<Organizacion, "nombreComercial" | "razonSocial">,

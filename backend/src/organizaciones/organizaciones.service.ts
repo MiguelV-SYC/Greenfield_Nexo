@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto"
 
-import { ConflictException, Injectable } from "@nestjs/common"
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common"
 
 import { AuditoriaService } from "@/common/auditoria/auditoria.service"
 import type { UsuarioActual } from "@/common/auth/usuario-actual"
@@ -14,7 +18,8 @@ import { Prisma } from "@/generated/prisma/client"
 import { calcularEstandaresAplicables } from "./dominio/estandares-aplicables"
 import type { OrganizacionDto } from "./dto/organizacion.dto"
 import type { RegistrarOrganizacionDto } from "./dto/registrar-organizacion.dto"
-import { aDetalle } from "./mapeo"
+import type { ListaOrganizacionesDto } from "./dto/tarjeta-organizacion.dto"
+import { aDetalle, aTarjeta } from "./mapeo"
 import { validarReferencias } from "./referencias"
 
 function esNitDuplicado(error: unknown): boolean {
@@ -22,6 +27,18 @@ function esNitDuplicado(error: unknown): boolean {
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === "P2002"
   )
+}
+
+const FORMATO_UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/** R6.1: un id mal formado responde igual que una organización ajena. */
+function exigirUuid(id: string): void {
+  if (!FORMATO_UUID.test(id)) throw new NotFoundException()
+}
+
+function contextoDe(usuario: UsuarioActual) {
+  return { usuarioId: usuario.id, esAdmin: usuario.esAdmin }
 }
 
 @Injectable()
@@ -55,6 +72,57 @@ export class OrganizacionesService {
         throw new ConflictException("El NIT ya está registrado")
       throw error
     }
+  }
+
+  /**
+   * R5.1–R5.7: organizaciones de las que el usuario es miembro. El filtro por
+   * membresía es explícito; RLS lo refuerza. El Administrador no ve aquí las
+   * ajenas: las valida desde su cola (R5.8).
+   */
+  async listarMias(usuario: UsuarioActual): Promise<ListaOrganizacionesDto> {
+    const organizaciones = await this.bd.ejecutarComo(
+      contextoDe(usuario),
+      (tx) =>
+        tx.organizacion.findMany({
+          where: { miembros: { some: { usuarioId: usuario.id } } },
+          include: { arl: true },
+          orderBy: { creadaEn: "asc" },
+        }),
+    )
+    return {
+      total: organizaciones.length,
+      organizaciones: organizaciones.map(aTarjeta),
+    }
+  }
+
+  /** R5.9, R6.1, R6.2: detalle; una organización ajena no existe (404). */
+  async obtener(usuario: UsuarioActual, id: string): Promise<OrganizacionDto> {
+    exigirUuid(id)
+    const organizacion = await this.bd.ejecutarComo(contextoDe(usuario), (tx) =>
+      tx.organizacion.findUnique({ where: { id }, include: { sedes: true } }),
+    )
+    if (!organizacion) throw new NotFoundException()
+    return aDetalle(organizacion)
+  }
+
+  /** DEC-12: lo consulta `auth` al cambiar de organización activa (R5.4). */
+  async puedeIngresar(
+    usuarioId: string,
+    organizacionId: string,
+  ): Promise<boolean> {
+    if (!FORMATO_UUID.test(organizacionId)) return false
+    const aprobada = await this.bd.ejecutarComo(
+      { usuarioId, esAdmin: false },
+      (tx) =>
+        tx.organizacion.count({
+          where: {
+            id: organizacionId,
+            estado: "APROBADA",
+            miembros: { some: { usuarioId } },
+          },
+        }),
+    )
+    return aprobada === 1
   }
 
   private async crear(
