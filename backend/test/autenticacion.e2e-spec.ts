@@ -60,17 +60,17 @@ describe("Autenticación simulada por HTTP (D1, DEC-11)", () => {
 
   // Derived from R4.9
   it("responde 403 a un Líder SST en una ruta de Administrador", async () => {
-    await request(app.getHttpServer())
+    const respuesta = await request(app.getHttpServer())
       .get("/prueba/admin")
       .set("x-usuario-mock", "lider-a")
-      .expect(403)
+    expect(respuesta.status).toBe(403)
   })
 
   // Derived from R6.2
   it("deja pasar al Administrador", async () => {
-    await request(app.getHttpServer())
+    const respuesta = await request(app.getHttpServer())
       .get("/prueba/admin")
       .set("x-usuario-mock", "admin-1;admin")
-      .expect(200)
+    expect(respuesta.status).toBe(200)
   })
 })
