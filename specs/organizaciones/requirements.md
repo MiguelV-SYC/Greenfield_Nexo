@@ -3,7 +3,7 @@ feature: organizaciones
 modality: code                  # code | config-only | data-migration | catalog-only | docs-only | refactor-only (§6)
 initiative: NONE                # opcional — slug/URL sólo si pertenece a una Initiative
 owner: "@MiguelV-SYC"
-status: approved                # draft | in-review | approved | in-implementation | done
+status: in-implementation       # draft | in-review | approved | in-implementation | done
                                 # Quién produce cada transición:
                                 #   draft            /spec-new
                                 #   in-review        el owner, al pedir revisión de la spec

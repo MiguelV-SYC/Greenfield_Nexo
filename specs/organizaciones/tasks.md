@@ -31,31 +31,31 @@ Derivado el 2026-09-25 del `design.md` firmado en G2 (commit `9ad3f16`).
 - **Cubre**: — (chore de scaffolding; `stack/tech-stack.md` § Build)
 - **Archivos**: `package.json`, `pnpm-workspace.yaml`, `.nvmrc`, `.npmrc`, `.prettierrc.json`, `.prettierignore`, `tsconfig.base.json`, `.gitignore`
 - **Acceptance**:
-  - [ ] `packageManager: pnpm@10.34.5` y `engines.node: 24.x`
-  - [ ] `pnpm -r build`, `pnpm -r lint` y `pnpm -r test` corren desde la raíz
+  - [x] `packageManager: pnpm@10.34.5` y `engines.node: 24.x`
+  - [x] `pnpm -r build`, `pnpm -r lint` y `pnpm -r test` corren desde la raíz
 
 ## T2 — Frontend desde `nexo-design-kit` [M]
 - **Cubre**: — (DEC-8; habilita R5.*, R3.6)
 - **Archivos**: `nexo-design-kit/` → `frontend/` (`git mv`), `frontend/package.json`, borrar `frontend/package-lock.json`
 - **Acceptance**:
-  - [ ] Paquete `@nexo/frontend` del workspace, instalado con pnpm
-  - [ ] `next build` y `eslint` verdes sin cambiar ninguna pantalla
+  - [x] Paquete `@nexo/frontend` del workspace, instalado con pnpm
+  - [x] `next build` y `eslint` verdes sin cambiar ninguna pantalla
 
 ## T3 — Backend NestJS base [M]
 - **Cubre**: — (`stack/architecture.md`, `stack/patterns.md`)
 - **Archivos**: `backend/package.json`, `backend/tsconfig*.json`, `backend/nest-cli.json`, `backend/eslint.config.mjs`, `backend/jest.config.ts`, `backend/src/main.ts`, `backend/src/app.module.ts`, `backend/src/common/configuracion.ts`, `backend/test/jest-e2e.config.ts`
 - **Acceptance**:
-  - [ ] Prefijo `/api/v1`, Swagger en `/api/docs`, `ValidationPipe` global, logs con nestjs-pino
-  - [ ] ESLint prohíbe `console.log` y `any`; incluye `eslint-plugin-sonarjs`
-  - [ ] `nest build`, `eslint` y `jest` verdes (un test de arranque del módulo raíz)
+  - [x] Prefijo `/api/v1`, Swagger en `/api/docs`, `ValidationPipe` global, logs con nestjs-pino
+  - [x] ESLint prohíbe `console.log` y `any`; incluye `eslint-plugin-sonarjs`
+  - [x] `nest build`, `eslint` y `jest` verdes (un test de arranque del módulo raíz)
 
 ## T4 — Compose con PostgreSQL y roles [S]
 - **Cubre**: — (prerrequisito de DEC-1)
 - **Archivos**: `compose.yaml`, `infra/postgres/init/01-roles.sql`, `.env.example`, `backend/.env.example`
 - **Acceptance**:
-  - [ ] `postgres:16` con healthcheck y volumen nombrado
-  - [ ] Roles `nexo_migrador` (dueño de la base) y `nexo_app` (sin `BYPASSRLS`, sin ser dueño)
-  - [ ] `compose up` deja la base sana y `nexo_app` puede conectarse
+  - [x] `postgres:16` con healthcheck y volumen nombrado
+  - [x] Roles `nexo_migrador` (dueño de la base) y `nexo_app` (sin `BYPASSRLS`, sin ser dueño)
+  - [x] `compose up` deja la base sana y `nexo_app` puede conectarse
 
 **Checkpoint fase 0**: desde la raíz, `pnpm -r build` y `pnpm -r test`
 verdes; `compose up` deja Postgres sano; el frontend sirve las pantallas

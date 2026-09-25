@@ -1,6 +1,6 @@
 ---
 feature: organizaciones
-state: not-started
+state: in-progress
 methodology_version: "0.170"
 updated: 2026-09-25
 updated_by: "@MiguelV-SYC"
@@ -49,10 +49,10 @@ updated_by: "@MiguelV-SYC"
 
 ## Tasks
 
-T1: pending |
-T2: pending |
-T3: pending |
-T4: pending |
+T1: done | commit 2ac6e22 · 2026-09-25
+T2: done | commit fb175c2 · 2026-09-25
+T3: done | commit 471d00f · 2026-09-25
+T4: done | commit a906343 · 2026-09-25
 T5: pending |
 T6: pending |
 T7: pending |
@@ -94,3 +94,4 @@ D6 (concepto jurídico Ley 1581 — BLOCK sobre datos reales del piloto): NEGOTI
 - 2026-09-25: spec creada con /spec-new. Base visual: `nexo-design-kit` (pantalla `/organizaciones`, asistente `#modal-nueva-organizacion`, vista `#view-config`). Quedan 2 `[NEEDS CLARIFICATION]` (R1.7, R4.8).
 - 2026-09-25: G2 firmado por Miguel Angel Villamizar sobre 9ad3f16. Checklist 25/25, 0 OPEN_QUESTIONS, 0 [NEEDS CLARIFICATION], design.md resuelto (DEC-1..DEC-13), /spec-verify --pre-g2 sin CRITICAL. Self-approval: un solo dev/lead. Los [E10] de spec-lint esperan a que /spec-implement derive tasks.md. D6 (Ley 1581) bloquea cargar documentos reales del piloto.
 - 2026-09-25: /spec-implement derivó tasks.md (T1–T30, 6 fases).
+- 2026-09-25: fase 0 (Setup) completa; checkpoint verde: `pnpm -r build|lint|test` desde la raíz, Postgres sano en Compose y el frontend sirve las pantallas del kit. Desvíos menores de archivos frente a tasks.md: T3 usa `jest.config.js` (no `.ts`, para no depender de ts-node) con proyectos unit+integración en un solo config; T4 usa `01-roles.sh` (no `.sql`) para leer contraseñas del entorno. NestJS 12 es ESM-only: el backend sigue la plantilla oficial CJS (`require(esm)` de Node 24) y Jest corre con `--experimental-vm-modules`.
