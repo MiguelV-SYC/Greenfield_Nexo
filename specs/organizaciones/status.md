@@ -49,7 +49,36 @@ updated_by: "@MiguelV-SYC"
 
 ## Tasks
 
-<!-- Sin tasks todavía: las deriva /spec-implement del design.md firmado en G2. -->
+T1: pending |
+T2: pending |
+T3: pending |
+T4: pending |
+T5: pending |
+T6: pending |
+T7: pending |
+T8: pending |
+T9: pending |
+T10: pending |
+T11: pending |
+T12: pending |
+T13: pending |
+T14: pending |
+T15: pending |
+T16: pending |
+T17: pending |
+T18: pending |
+T19: pending |
+T20: pending |
+T21: pending |
+T22: pending |
+T23: pending |
+T24: pending |
+T25: pending |
+T26: pending |
+T27: pending |
+T28: pending |
+T29: pending |
+T30: pending |
 
 ## Dependencies snapshot
 
@@ -64,3 +93,4 @@ D6 (concepto jurídico Ley 1581 — BLOCK sobre datos reales del piloto): NEGOTI
 
 - 2026-09-25: spec creada con /spec-new. Base visual: `nexo-design-kit` (pantalla `/organizaciones`, asistente `#modal-nueva-organizacion`, vista `#view-config`). Quedan 2 `[NEEDS CLARIFICATION]` (R1.7, R4.8).
 - 2026-09-25: G2 firmado por Miguel Angel Villamizar sobre 9ad3f16. Checklist 25/25, 0 OPEN_QUESTIONS, 0 [NEEDS CLARIFICATION], design.md resuelto (DEC-1..DEC-13), /spec-verify --pre-g2 sin CRITICAL. Self-approval: un solo dev/lead. Los [E10] de spec-lint esperan a que /spec-implement derive tasks.md. D6 (Ley 1581) bloquea cargar documentos reales del piloto.
+- 2026-09-25: /spec-implement derivó tasks.md (T1–T30, 6 fases).
