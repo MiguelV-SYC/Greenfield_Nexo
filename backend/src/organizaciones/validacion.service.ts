@@ -6,15 +6,12 @@ import {
   BaseDatosTenant,
   type TransaccionBd,
 } from "@/common/tenant/base-datos-tenant"
-import {
-  aplicarTransicion,
-  type EstadoOrganizacion,
-  TransicionInvalidaError,
-} from "./dominio/transiciones"
+import { aplicarTransicion } from "./dominio/transiciones"
 import type { OrganizacionDto } from "./dto/organizacion.dto"
 import type { CasoValidacionDto } from "./dto/validacion.dto"
 import { traducirErrorDominio } from "./errores-dominio"
-import { aDetalle, nombreVisible } from "./mapeo"
+import { nombreVisible } from "./mapeo"
+import { actualizarSiSigueEn, leerDetalle } from "./persistencia"
 
 type DecisionAdministrador =
   { accion: "APROBAR" } | { accion: "DEVOLVER"; motivo: string }
@@ -89,7 +86,10 @@ export class ValidacionService {
     const rol = usuario.esAdmin ? "ADMINISTRADOR" : "LIDER_SST"
     const nuevo = aplicarTransicion(actual.estado, decision.accion, rol)
     const motivo = decision.accion === "DEVOLVER" ? decision.motivo : null
-    await this.cambiarEstado(tx, id, actual.estado, nuevo, motivo)
+    await actualizarSiSigueEn(tx, id, actual.estado, {
+      estado: nuevo,
+      motivoDevolucion: motivo,
+    })
     await this.auditoria.registrar(tx, usuario.id, {
       organizacionId: id,
       entidad: "Organizacion",
@@ -99,27 +99,6 @@ export class ValidacionService {
       valorNuevo: { estado: nuevo },
       ...(motivo ? { motivo } : {}),
     })
-    const organizacion = await tx.organizacion.findUniqueOrThrow({
-      where: { id },
-      include: { sedes: true },
-    })
-    return aDetalle(organizacion)
-  }
-
-  /** Condicionado al estado leído: si otra decisión llegó antes, 409. */
-  private async cambiarEstado(
-    tx: TransaccionBd,
-    id: string,
-    desde: EstadoOrganizacion,
-    hacia: EstadoOrganizacion,
-    motivoDevolucion: string | null,
-  ): Promise<void> {
-    const { count } = await tx.organizacion.updateMany({
-      where: { id, estado: desde },
-      data: { estado: hacia, motivoDevolucion },
-    })
-    if (count !== 1) {
-      throw new TransicionInvalidaError("La organización cambió de estado")
-    }
+    return leerDetalle(tx, id)
   }
 }

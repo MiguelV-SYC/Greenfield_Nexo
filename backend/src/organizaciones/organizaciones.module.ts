@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 
 import { AdminValidacionController } from "./admin-validacion.controller"
 import { CatalogosModule } from "./catalogos/catalogos.module"
+import { CorreccionService } from "./correccion.service"
 import { EstandaresController } from "./estandares.controller"
 import { OrganizacionesController } from "./organizaciones.controller"
 import { OrganizacionesService } from "./organizaciones.service"
@@ -14,7 +15,7 @@ import { ValidacionService } from "./validacion.service"
     OrganizacionesController,
     AdminValidacionController,
   ],
-  providers: [OrganizacionesService, ValidacionService],
+  providers: [OrganizacionesService, ValidacionService, CorreccionService],
   exports: [OrganizacionesService],
 })
 export class OrganizacionesModule {}

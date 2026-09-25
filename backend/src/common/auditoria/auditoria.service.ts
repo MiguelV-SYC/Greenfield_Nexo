@@ -8,6 +8,7 @@ export type AccionAuditoria =
   | "APROBAR"
   | "DEVOLVER"
   | "REENVIAR"
+  | "CORREGIR"
   | "EDITAR"
   | "CARGAR_DOCUMENTO"
 

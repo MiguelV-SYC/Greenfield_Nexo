@@ -14,27 +14,17 @@ import {
   type TransaccionBd,
 } from "@/common/tenant/base-datos-tenant"
 import { excepcionDeCampos } from "@/common/validacion/errores-validacion"
-import { Prisma } from "@/generated/prisma/client"
 import { calcularEstandaresAplicables } from "./dominio/estandares-aplicables"
 import type { OrganizacionDto } from "./dto/organizacion.dto"
 import type { RegistrarOrganizacionDto } from "./dto/registrar-organizacion.dto"
 import type { ListaOrganizacionesDto } from "./dto/tarjeta-organizacion.dto"
 import { aDetalle, aTarjeta } from "./mapeo"
+import { esNitDuplicado, esUuid, instantanea } from "./persistencia"
 import { validarReferencias } from "./referencias"
-
-function esNitDuplicado(error: unknown): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === "P2002"
-  )
-}
-
-const FORMATO_UUID =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /** R6.1: un id mal formado responde igual que una organización ajena. */
 function exigirUuid(id: string): void {
-  if (!FORMATO_UUID.test(id)) throw new NotFoundException()
+  if (!esUuid(id)) throw new NotFoundException()
 }
 
 function contextoDe(usuario: UsuarioActual) {
@@ -110,7 +100,7 @@ export class OrganizacionesService {
     usuarioId: string,
     organizacionId: string,
   ): Promise<boolean> {
-    if (!FORMATO_UUID.test(organizacionId)) return false
+    if (!esUuid(organizacionId)) return false
     const aprobada = await this.bd.ejecutarComo(
       { usuarioId, esAdmin: false },
       (tx) =>
@@ -163,7 +153,7 @@ export class OrganizacionesService {
       entidad: "Organizacion",
       entidadId: id,
       accion: "REGISTRAR",
-      valorNuevo: JSON.parse(JSON.stringify(detalle)),
+      valorNuevo: instantanea(detalle),
     })
     return detalle
   }
