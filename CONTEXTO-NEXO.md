@@ -117,4 +117,4 @@ Referencia visual aprobada: `#view-indicadores` (SG-SST) y `#view-pesv-indicador
 5. Fuente de verdad del Excel maestro `decreto_1072.xlsx`.
 
 ## 13. Artefactos de referencia
-- `nexo-design-kit/`, `re-rh-37-sst indicadores 2026. 0.2.xlsx`, `_AUDITORIA DOCUMENTAL PESV SYC.xlsm.xlsx`.
+- `nexo-design-kit` (desde 2026-09-25 vive en `frontend/`; mockup V5 en `frontend/brand/mockup/NexoV.5_mockup.html`), `re-rh-37-sst indicadores 2026. 0.2.xlsx`, `_AUDITORIA DOCUMENTAL PESV SYC.xlsm.xlsx`.
