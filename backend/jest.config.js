@@ -24,6 +24,7 @@ module.exports = {
     "src/**/*.ts",
     "!src/**/*.spec.ts",
     "!src/main.ts",
+    "!src/cli/**",
     "!src/**/*.module.ts",
     "!src/**/dto/**",
     "!src/generated/**",

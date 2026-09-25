@@ -5,6 +5,7 @@ import { AuditoriaModule } from "@/common/auditoria/auditoria.module"
 import { AuthModule } from "@/common/auth/auth.module"
 import { leerConfiguracion } from "@/common/configuracion"
 import { PrismaModule } from "@/common/prisma/prisma.module"
+import { CatalogosModule } from "@/organizaciones/catalogos/catalogos.module"
 
 const { nivelLog } = leerConfiguracion()
 
@@ -13,6 +14,7 @@ const { nivelLog } = leerConfiguracion()
     AuditoriaModule,
     AuthModule,
     PrismaModule,
+    CatalogosModule,
     LoggerModule.forRoot({
       pinoHttp: {
         level: nivelLog,

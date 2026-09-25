@@ -1,0 +1,32 @@
+{
+ "catalogo": "arl",
+ "version": "mock-mockup-v5",
+ "fechaCorte": "2026-09-25",
+ "fuente": "MOCK de D5: las ARL del mockup V5. Se reemplaza cuando Kevin Arley confirme la lista vigente.",
+ "arl": [
+  {
+   "codigo": "aurora",
+   "nombre": "Aurora"
+  },
+  {
+   "codigo": "sura",
+   "nombre": "Sura"
+  },
+  {
+   "codigo": "positiva",
+   "nombre": "Positiva"
+  },
+  {
+   "codigo": "colmena",
+   "nombre": "Colmena"
+  },
+  {
+   "codigo": "bolivar",
+   "nombre": "Bolívar"
+  },
+  {
+   "codigo": "liberty",
+   "nombre": "Liberty"
+  }
+ ]
+}

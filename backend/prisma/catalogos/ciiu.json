@@ -1,0 +1,76 @@
+{
+ "catalogo": "ciiu",
+ "version": "mock-mockup-v5",
+ "fechaCorte": "2026-09-25",
+ "fuente": "MOCK de D4: los códigos del mockup V5 (CIIU Rev. 4 A.C.). Se reemplaza por el catálogo completo al desmockear D4.",
+ "actividades": [
+  {
+   "codigo": "6201",
+   "descripcion": "Actividades de desarrollo de sistemas informáticos (planificación, análisis, diseño, programación)"
+  },
+  {
+   "codigo": "6202",
+   "descripcion": "Actividades de consultoría informática y de gestión de instalaciones informáticas"
+  },
+  {
+   "codigo": "6311",
+   "descripcion": "Procesamiento de datos, alojamiento (hosting) y actividades relacionadas"
+  },
+  {
+   "codigo": "6312",
+   "descripcion": "Portales web"
+  },
+  {
+   "codigo": "6420",
+   "descripcion": "Actividades de sociedades de cartera (holding)"
+  },
+  {
+   "codigo": "4711",
+   "descripcion": "Comercio al por menor en establecimientos no especializados, con surtido compuesto principalmente por alimentos"
+  },
+  {
+   "codigo": "4620",
+   "descripcion": "Comercio al por mayor de materias primas agropecuarias"
+  },
+  {
+   "codigo": "4100",
+   "descripcion": "Construcción de edificios"
+  },
+  {
+   "codigo": "4210",
+   "descripcion": "Construcción de carreteras y vías de ferrocarril"
+  },
+  {
+   "codigo": "4921",
+   "descripcion": "Transporte de pasajeros"
+  },
+  {
+   "codigo": "4923",
+   "descripcion": "Transporte de carga por carretera"
+  },
+  {
+   "codigo": "5611",
+   "descripcion": "Expendio a la mesa de comidas preparadas"
+  },
+  {
+   "codigo": "8511",
+   "descripcion": "Educación de la primera infancia"
+  },
+  {
+   "codigo": "8621",
+   "descripcion": "Actividades de la práctica médica, sin internación"
+  },
+  {
+   "codigo": "8010",
+   "descripcion": "Actividades de seguridad privada"
+  },
+  {
+   "codigo": "8299",
+   "descripcion": "Actividades de servicios de apoyo a las empresas n.c.p."
+  },
+  {
+   "codigo": "1011",
+   "descripcion": "Procesamiento y conservación de carne y productos cárnicos"
+  }
+ ]
+}

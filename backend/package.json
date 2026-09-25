@@ -13,7 +13,8 @@
     "test:unit": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --selectProjects unit",
     "test:integracion": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --selectProjects integracion",
     "generar": "prisma generate",
-    "migrar": "prisma migrate deploy"
+    "migrar": "prisma migrate deploy",
+    "sembrar": "node dist/cli/sembrar-catalogos.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.0",
