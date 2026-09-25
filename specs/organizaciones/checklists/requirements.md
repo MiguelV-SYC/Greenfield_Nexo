@@ -45,7 +45,7 @@
 ## Claridad
 
 - [ ] CHK-005 ¿Cero adjetivos sin métrica ("rápido", "intuitivo", "robusto", "escalable")? [Claridad]
-- [ ] CHK-006 ¿Cero marcadores [NEEDS CLARIFICATION] pendientes? [Claridad]
+- [x] CHK-006 ¿Cero marcadores [NEEDS CLARIFICATION] pendientes? [Claridad] — 2026-09-25 /spec-clarify: R1.7 y R4.8 resueltos; 0 marcadores.
 - [ ] CHK-007 ¿Cada R*.* admite UNA sola interpretación razonable? [Claridad]
 - [ ] CHK-008 ¿Los términos de dominio se usan consistentemente (sin sinónimos intercambiados)? [Claridad]
 
@@ -69,11 +69,11 @@
 ## Items específicos de esta feature
 
 - [ ] CHK-017 ¿La regla de estándares aplicables (R3.1–R3.4) cubre sin huecos ni solapes todas las combinaciones de total de trabajadores y riesgo máximo, incluidos los bordes 10/11 y 50/51? [R3.1]
-- [ ] CHK-018 ¿Está definido qué ve y qué puede hacer cada rol (Líder SST, Administrador) en cada estado (En validación, Devuelta, Aprobada)? [R4.8]
-- [ ] CHK-019 ¿Está definido qué pasa si el Administrador aprueba o devuelve mientras el Líder SST está corrigiendo la misma organización (concurrencia)? [Gap]
+- [x] CHK-018 ¿Está definido qué ve y qué puede hacer cada rol (Líder SST, Administrador) en cada estado (En validación, Devuelta, Aprobada)? [R4.8] — 2026-09-25: R4.6, R4.8, R4.9, R5.4, R5.5 y R6.2 definen acciones por rol y estado.
+- [x] CHK-019 ¿Está definido qué pasa si el Administrador aprueba o devuelve mientras el Líder SST está corrigiendo la misma organización (concurrencia)? [Gap] — 2026-09-25: R4.8 impide editar En validación y el Administrador solo actúa En validación; no hay solape.
 - [ ] CHK-020 ¿El aislamiento entre organizaciones está expresado como comportamiento observable, sin depender de cómo se implementa? [R6.1]
-- [ ] CHK-021 ¿Se define el tamaño máximo por archivo de los documentos legales y qué pasa si se supera? [Gap]
+- [x] CHK-021 ¿Se define el tamaño máximo por archivo de los documentos legales y qué pasa si se supera? [Gap] — 2026-09-25: R7.9, máximo 10 MB.
 - [ ] CHK-022 ¿La retención de 20 años y la imposibilidad de borrar documentos son compatibles con la Ley 1581 de 2012 (datos personales del representante legal)? [R7.8]
-- [ ] CHK-023 ¿Está definido si el NIT y el dígito de verificación se pueden editar después de aprobada la organización? [Gap]
+- [x] CHK-023 ¿Está definido si el NIT y el dígito de verificación se pueden editar después de aprobada la organización? [Gap] — 2026-09-25: R8.6, no editables en una Aprobada.
 - [ ] CHK-024 ¿Los catálogos DIVIPOLA, CIIU y ARL declaran la versión o fecha de corte con la que se validan los datos? [R2.5]
 - [ ] CHK-025 ¿Los estados de UI del flujo (sin organizaciones, cargando, error, organización Devuelta) están cubiertos por al menos un R*.*, y hay un criterio de accesibilidad WCAG 2.1 AA verificable para el asistente? [R5.6]

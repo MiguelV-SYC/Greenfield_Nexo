@@ -147,14 +147,10 @@ manda en lo visual; las reglas de negocio las fija esta spec.
          dígito de verificación no corresponde al NIT.
          Tests: unit
 
-**R1.7** IF el NIT ya pertenece a otra organización registrada, THEN
-         THE SYSTEM SHALL rechazar el registro indicando que el NIT ya
-         está registrado.
+**R1.7** IF el NIT ya pertenece a otra organización en cualquier estado (En validación,
+         Devuelta o Aprobada), THEN THE SYSTEM SHALL rechazar el registro indicando que
+         el NIT ya está registrado.
          Tests: integration
-         [NEEDS CLARIFICATION: ¿el rechazo aplica contra organizaciones
-         en cualquier estado (En validación, Devuelta, Aprobada) o solo
-         contra las Aprobadas? Opciones: (a) cualquier estado; (b) solo
-         Aprobadas, permitiendo registros paralelos en validación.]
 
 **R1.8** WHERE el nombre comercial está vacío, THE SYSTEM SHALL mostrar
          la razón social en su lugar.
@@ -272,11 +268,6 @@ las sedes (I < II < III < IV < V).
 **R4.8** WHILE una organización está En validación, THE SYSTEM SHALL
          impedir que el Líder SST modifique sus datos y sus sedes.
          Tests: integration
-         [NEEDS CLARIFICATION: ¿el Líder SST puede editar mientras la
-         organización está En validación? Opciones: (a) no, solo
-         cuando está Devuelta; (b) sí, y la edición no cambia el
-         estado; (c) sí, y la edición la saca de la cola hasta
-         reenviarla.]
 
 **R4.9** IF un usuario que no es Administrador intenta aprobar o
          devolver una organización, THEN THE SYSTEM SHALL rechazar la
@@ -386,6 +377,10 @@ las sedes (I < II < III < IV < V).
          versiones anteriores.
          Tests: integration
 
+**R7.9** IF el archivo cargado supera 10 MB, THEN THE SYSTEM SHALL
+         rechazarlo indicando el tamaño máximo permitido.
+         Tests: unit, integration
+
 ### R8 — Edición desde Configuración [P3]
 
 **R8.1** WHILE una organización está Aprobada, THE SYSTEM SHALL
@@ -411,6 +406,11 @@ las sedes (I < II < III < IV < V).
          trabajadores de una sede, THE SYSTEM SHALL recalcular los
          estándares aplicables según R3.*.
          Tests: integration
+
+**R8.6** IF se intenta modificar el NIT o el dígito de verificación de
+         una organización Aprobada, THEN THE SYSTEM SHALL rechazar el
+         cambio sin modificar la organización.
+         Tests: unit, integration
 
 ## Requisitos no funcionales
 
@@ -500,6 +500,7 @@ las sedes (I < II < III < IV < V).
 - Notificaciones por correo o SMS al registrar, aprobar o devolver
   (fuera de v1, `CONTEXTO-NEXO.md` §2).
 - Suspender o eliminar una organización aprobada.
+- Corregir el NIT de una organización ya aprobada (R8.6).
 - Derivar la clase de riesgo a partir del código CIIU: el Líder SST
   elige ambos por separado, como en el mockup.
 
@@ -521,6 +522,10 @@ las sedes (I < II < III < IV < V).
 - Q: ¿Cuántos estándares aplican con ≤50 trabajadores y riesgo IV–V? → A: 62, según `CONTEXTO-NEXO.md` §3 y el Cap. III de la Res. 0312 de 2019. El mockup V5 (21) se corrige al portar el asistente.
 - Q: ¿Cómo se parte la feature? → A: P1 registro, sedes y validación; P2 documentos legales; P3 edición desde Configuración.
 - Q: ¿Qué pasa cuando el Administrador rechaza? → A: La devuelve con motivo obligatorio; el Líder SST corrige y reenvía, sin límite de reenvíos.
+- Q: (/spec-clarify) ¿El Líder SST puede editar una organización En validación (R4.8)? → A: No; solo cuando está Devuelta. El Administrador valida exactamente lo enviado, y así no hay edición concurrente con la validación.
+- Q: (/spec-clarify) ¿Contra qué estados se rechaza un NIT duplicado (R1.7)? → A: Contra organizaciones en cualquier estado: un NIT corresponde a una sola organización en Nexo. Un segundo líder se vincula después por el módulo `accesos`.
+- Q: (/spec-clarify) ¿Tamaño máximo por archivo de un documento legal? → A: 10 MB; si se supera, se rechaza indicando el límite (R7.9 nuevo).
+- Q: (/spec-clarify) ¿Se puede editar el NIT de una organización aprobada? → A: No. El NIT y el dígito de verificación solo se corrigen mientras está Devuelta (R4.6); en una Aprobada se rechaza el cambio (R8.6 nuevo). Corregir un NIT ya aprobado queda fuera de v1.
 
 ## OPEN_QUESTIONS
 
