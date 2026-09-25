@@ -702,3 +702,7 @@ los anti-patrones más críticos como recordatorio explícito.
 <!-- (vacío por default — agrega secciones tuyas aquí) -->
 
 <!-- USER EXTENSIONS END -->
+
+
+## Contexto del proyecto
+@CONTEXTO-NEXO.md
