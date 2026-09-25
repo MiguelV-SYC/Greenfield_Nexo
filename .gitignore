@@ -19,6 +19,7 @@ next-env.d.ts
 dist/
 build/
 coverage/
+*.tsbuildinfo
 
 # Playwright
 test-results/
