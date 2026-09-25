@@ -11,7 +11,11 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { LogoMark } from "@/components/login/LogoMark"
-import { guardarIdentidad, identidadDesdeUsuario } from "@/lib/api/identidad-simulada"
+import {
+  esAdministrador,
+  guardarIdentidad,
+  identidadDesdeUsuario,
+} from "@/lib/api/identidad-simulada"
 
 export interface LoginCardProps {
   /** Ruta a la que navega "Ingresar". */
@@ -41,8 +45,10 @@ export function LoginCard({
     event.preventDefault()
     // MOCK de D1 (DEC-11): el usuario escrito es la identidad simulada.
     const usuario = new FormData(event.currentTarget).get("username")
-    guardarIdentidad(identidadDesdeUsuario(typeof usuario === "string" ? usuario : ""))
-    router.push(destination)
+    const identidad = identidadDesdeUsuario(typeof usuario === "string" ? usuario : "")
+    guardarIdentidad(identidad)
+    // El Administrador de la plataforma trabaja en su cola de validación (R5.8).
+    router.push(esAdministrador(identidad) ? "/admin/validacion" : destination)
   }
 
   return (
