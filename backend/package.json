@@ -14,7 +14,8 @@
     "test:integracion": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --selectProjects integracion",
     "generar": "prisma generate",
     "migrar": "prisma migrate deploy",
-    "sembrar": "node dist/cli/sembrar-catalogos.js"
+    "sembrar": "node dist/cli/sembrar-catalogos.js",
+    "openapi": "node dist/cli/exportar-openapi.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.0",

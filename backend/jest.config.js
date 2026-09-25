@@ -24,6 +24,7 @@ module.exports = {
     "src/**/*.ts",
     "!src/**/*.spec.ts",
     "!src/main.ts",
+    "!src/cargar-entorno.ts",
     "!src/cli/**",
     "!src/**/*.module.ts",
     "!src/**/dto/**",

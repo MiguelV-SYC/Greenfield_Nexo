@@ -1,3 +1,4 @@
+import "@/cargar-entorno"
 import "reflect-metadata"
 import { NestFactory } from "@nestjs/core"
 

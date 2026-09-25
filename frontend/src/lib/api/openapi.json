@@ -1,0 +1,1055 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/estandares-aplicables/calculo": {
+      "post": {
+        "operationId": "EstandaresController_calcular",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculoEstandaresDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstandaresAplicablesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "organizaciones"
+        ]
+      }
+    },
+    "/api/v1/organizaciones": {
+      "post": {
+        "operationId": "OrganizacionesController_registrar",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrarOrganizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizacionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Campos inválidos en errores[].campo"
+          },
+          "409": {
+            "description": "El NIT ya está registrado (R1.7)"
+          }
+        },
+        "tags": [
+          "organizaciones"
+        ]
+      },
+      "get": {
+        "operationId": "OrganizacionesController_listar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListaOrganizacionesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "organizaciones"
+        ]
+      }
+    },
+    "/api/v1/organizaciones/{id}": {
+      "get": {
+        "operationId": "OrganizacionesController_obtener",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizacionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe o no es del usuario (R6.1)"
+          }
+        },
+        "tags": [
+          "organizaciones"
+        ]
+      },
+      "put": {
+        "operationId": "OrganizacionesController_corregir",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrarOrganizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizacionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Campos inválidos en errores[].campo"
+          },
+          "403": {
+            "description": "Solo el Líder SST corrige (R4.6)"
+          },
+          "404": {
+            "description": "No existe o no es del usuario (R6.1)"
+          },
+          "409": {
+            "description": "No está Devuelta (R4.8) o NIT registrado"
+          }
+        },
+        "tags": [
+          "organizaciones"
+        ]
+      }
+    },
+    "/api/v1/organizaciones/{id}/reenvio": {
+      "post": {
+        "operationId": "OrganizacionesController_reenviar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizacionDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el Líder SST reenvía (R4.7)"
+          },
+          "404": {
+            "description": "No existe o no es del usuario (R6.1)"
+          },
+          "409": {
+            "description": "No está Devuelta"
+          }
+        },
+        "tags": [
+          "organizaciones"
+        ]
+      }
+    },
+    "/api/v1/admin/organizaciones/validacion": {
+      "get": {
+        "operationId": "AdminValidacionController_cola",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CasoValidacionDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el Administrador de la plataforma (R4.9)"
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/organizaciones/{id}/aprobacion": {
+      "post": {
+        "operationId": "AdminValidacionController_aprobar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizacionDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el Administrador de la plataforma (R4.9)"
+          },
+          "409": {
+            "description": "No está En validación (R4.10)"
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/organizaciones/{id}/devolucion": {
+      "post": {
+        "operationId": "AdminValidacionController_devolver",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevolucionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizacionDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el Administrador de la plataforma (R4.9)"
+          },
+          "409": {
+            "description": "No está En validación (R4.10)"
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/catalogos/departamentos": {
+      "get": {
+        "operationId": "CatalogosController_departamentos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DepartamentoDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogos"
+        ]
+      }
+    },
+    "/api/v1/catalogos/departamentos/{codigo}/municipios": {
+      "get": {
+        "operationId": "CatalogosController_municipios",
+        "parameters": [
+          {
+            "name": "codigo",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MunicipioDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogos"
+        ]
+      }
+    },
+    "/api/v1/catalogos/ciiu": {
+      "get": {
+        "operationId": "CatalogosController_ciiu",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Código o palabra de la descripción",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActividadCiiuDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogos"
+        ]
+      }
+    },
+    "/api/v1/catalogos/arl": {
+      "get": {
+        "operationId": "CatalogosController_arl",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ArlDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogos"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Nexo API",
+    "description": "",
+    "version": "1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "SedeRiesgoDto": {
+        "type": "object",
+        "properties": {
+          "claseRiesgo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ],
+            "example": "III"
+          },
+          "trabajadores": {
+            "type": "number",
+            "example": 12,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "claseRiesgo",
+          "trabajadores"
+        ]
+      },
+      "CalculoEstandaresDto": {
+        "type": "object",
+        "properties": {
+          "sedes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SedeRiesgoDto"
+            }
+          }
+        },
+        "required": [
+          "sedes"
+        ]
+      },
+      "EstandaresAplicablesDto": {
+        "type": "object",
+        "properties": {
+          "estandares": {
+            "type": "number",
+            "enum": [
+              7,
+              21,
+              62
+            ],
+            "example": 21
+          },
+          "riesgoMaximo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ],
+            "example": "III"
+          },
+          "totalTrabajadores": {
+            "type": "number",
+            "example": 12
+          },
+          "regla": {
+            "type": "string",
+            "example": "Entre 11 y 50 trabajadores con riesgo máximo I, II o III"
+          }
+        },
+        "required": [
+          "estandares",
+          "riesgoMaximo",
+          "totalTrabajadores",
+          "regla"
+        ]
+      },
+      "SedeDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Oficina principal"
+          },
+          "direccion": {
+            "type": "string",
+            "example": "Calle 36 # 27-52"
+          },
+          "departamentoCodigo": {
+            "type": "string",
+            "example": "68",
+            "description": "Código DANE (DIVIPOLA)"
+          },
+          "municipioCodigo": {
+            "type": "string",
+            "example": "68001",
+            "description": "Código DANE (DIVIPOLA)"
+          },
+          "claseRiesgo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ],
+            "example": "II"
+          },
+          "trabajadores": {
+            "type": "number",
+            "example": 12,
+            "minimum": 1
+          },
+          "ciiuCodigo": {
+            "type": "string",
+            "example": "6201",
+            "description": "Código CIIU"
+          }
+        },
+        "required": [
+          "nombre",
+          "direccion",
+          "departamentoCodigo",
+          "municipioCodigo",
+          "claseRiesgo",
+          "trabajadores",
+          "ciiuCodigo"
+        ]
+      },
+      "RegistrarOrganizacionDto": {
+        "type": "object",
+        "properties": {
+          "razonSocial": {
+            "type": "string",
+            "example": "Sistemas y Computadores S.A."
+          },
+          "nombreComercial": {
+            "type": "string",
+            "example": "SYC"
+          },
+          "tipoPersona": {
+            "type": "string",
+            "enum": [
+              "JURIDICA",
+              "NATURAL"
+            ],
+            "example": "JURIDICA"
+          },
+          "nit": {
+            "type": "string",
+            "example": "800197268",
+            "description": "Solo dígitos, sin DV"
+          },
+          "digitoVerificacion": {
+            "type": "string",
+            "example": "4"
+          },
+          "repLegalNombre": {
+            "type": "string",
+            "example": "Nombre del representante legal"
+          },
+          "repLegalTipoDoc": {
+            "type": "string",
+            "enum": [
+              "CC",
+              "CE",
+              "PASAPORTE"
+            ]
+          },
+          "repLegalNumeroDoc": {
+            "type": "string",
+            "example": "1234567"
+          },
+          "arlCodigo": {
+            "type": "string",
+            "example": "aurora",
+            "description": "Código del catálogo de ARL"
+          },
+          "sedes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SedeDto"
+            }
+          }
+        },
+        "required": [
+          "razonSocial",
+          "tipoPersona",
+          "nit",
+          "digitoVerificacion",
+          "repLegalNombre",
+          "sedes"
+        ]
+      },
+      "SedeRegistradaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Oficina principal"
+          },
+          "direccion": {
+            "type": "string",
+            "example": "Calle 36 # 27-52"
+          },
+          "departamentoCodigo": {
+            "type": "string",
+            "example": "68",
+            "description": "Código DANE (DIVIPOLA)"
+          },
+          "municipioCodigo": {
+            "type": "string",
+            "example": "68001",
+            "description": "Código DANE (DIVIPOLA)"
+          },
+          "claseRiesgo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ],
+            "example": "II"
+          },
+          "trabajadores": {
+            "type": "number",
+            "example": 12,
+            "minimum": 1
+          },
+          "ciiuCodigo": {
+            "type": "string",
+            "example": "6201",
+            "description": "Código CIIU"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "nombre",
+          "direccion",
+          "departamentoCodigo",
+          "municipioCodigo",
+          "claseRiesgo",
+          "trabajadores",
+          "ciiuCodigo",
+          "id"
+        ]
+      },
+      "OrganizacionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "razonSocial": {
+            "type": "string"
+          },
+          "nombreComercial": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreVisible": {
+            "type": "string",
+            "description": "Nombre comercial o, si falta, la razón social (R1.8)"
+          },
+          "tipoPersona": {
+            "type": "string",
+            "enum": [
+              "JURIDICA",
+              "NATURAL"
+            ]
+          },
+          "nit": {
+            "type": "string"
+          },
+          "digitoVerificacion": {
+            "type": "string"
+          },
+          "repLegalNombre": {
+            "type": "string"
+          },
+          "repLegalTipoDoc": {
+            "type": "string",
+            "enum": [
+              "CC",
+              "CE",
+              "PASAPORTE"
+            ],
+            "nullable": true
+          },
+          "repLegalNumeroDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "arlCodigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "EN_VALIDACION",
+              "DEVUELTA",
+              "APROBADA"
+            ]
+          },
+          "motivoDevolucion": {
+            "type": "string",
+            "nullable": true
+          },
+          "enviadaEn": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "riesgoMaximo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ]
+          },
+          "totalTrabajadores": {
+            "type": "number"
+          },
+          "estandaresAplicables": {
+            "type": "number",
+            "enum": [
+              7,
+              21,
+              62
+            ]
+          },
+          "sedes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SedeRegistradaDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "razonSocial",
+          "nombreVisible",
+          "tipoPersona",
+          "nit",
+          "digitoVerificacion",
+          "repLegalNombre",
+          "estado",
+          "enviadaEn",
+          "riesgoMaximo",
+          "totalTrabajadores",
+          "estandaresAplicables",
+          "sedes"
+        ]
+      },
+      "ArlDto": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "aurora"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Aurora"
+          }
+        },
+        "required": [
+          "codigo",
+          "nombre"
+        ]
+      },
+      "TarjetaOrganizacionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nombreVisible": {
+            "type": "string",
+            "description": "Nombre comercial o razón social (R1.8)"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "EN_VALIDACION",
+              "DEVUELTA",
+              "APROBADA"
+            ]
+          },
+          "riesgoMaximo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ]
+          },
+          "arl": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ArlDto"
+              }
+            ]
+          },
+          "totalTrabajadores": {
+            "type": "number"
+          },
+          "estandaresAplicables": {
+            "type": "number",
+            "enum": [
+              7,
+              21,
+              62
+            ]
+          },
+          "porcentajeImplementacion": {
+            "type": "number",
+            "nullable": true,
+            "description": "null = Sin evaluar mientras D2 esté en MOCK (R5.3)"
+          },
+          "porcentajeCumplimiento": {
+            "type": "number",
+            "nullable": true,
+            "description": "Ídem (R5.3)"
+          },
+          "puedeIngresar": {
+            "type": "boolean",
+            "description": "Solo true si está Aprobada (R5.4, DEC-12)"
+          },
+          "motivoDevolucion": {
+            "type": "string",
+            "nullable": true,
+            "description": "Solo si está Devuelta (R5.5)"
+          }
+        },
+        "required": [
+          "id",
+          "nombreVisible",
+          "estado",
+          "riesgoMaximo",
+          "totalTrabajadores",
+          "estandaresAplicables",
+          "puedeIngresar"
+        ]
+      },
+      "ListaOrganizacionesDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Organizaciones del usuario (R5.7)"
+          },
+          "organizaciones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TarjetaOrganizacionDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "organizaciones"
+        ]
+      },
+      "CasoValidacionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nombreVisible": {
+            "type": "string"
+          },
+          "razonSocial": {
+            "type": "string"
+          },
+          "nit": {
+            "type": "string"
+          },
+          "digitoVerificacion": {
+            "type": "string"
+          },
+          "enviadaEn": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "riesgoMaximo": {
+            "type": "string",
+            "enum": [
+              "I",
+              "II",
+              "III",
+              "IV",
+              "V"
+            ]
+          },
+          "totalTrabajadores": {
+            "type": "number"
+          },
+          "estandaresAplicables": {
+            "type": "number",
+            "enum": [
+              7,
+              21,
+              62
+            ]
+          },
+          "sedes": {
+            "type": "number",
+            "description": "Número de sedes"
+          }
+        },
+        "required": [
+          "id",
+          "nombreVisible",
+          "razonSocial",
+          "nit",
+          "digitoVerificacion",
+          "enviadaEn",
+          "riesgoMaximo",
+          "totalTrabajadores",
+          "estandaresAplicables",
+          "sedes"
+        ]
+      },
+      "DevolucionDto": {
+        "type": "object",
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "example": "El RUT no corresponde a la razón social"
+          }
+        },
+        "required": [
+          "motivo"
+        ]
+      },
+      "DepartamentoDto": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "68"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "SANTANDER"
+          }
+        },
+        "required": [
+          "codigo",
+          "nombre"
+        ]
+      },
+      "MunicipioDto": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "68679"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "SAN GIL"
+          }
+        },
+        "required": [
+          "codigo",
+          "nombre"
+        ]
+      },
+      "ActividadCiiuDto": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "6201"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Actividades de desarrollo de sistemas informáticos"
+          }
+        },
+        "required": [
+          "codigo",
+          "descripcion"
+        ]
+      }
+    }
+  }
+}

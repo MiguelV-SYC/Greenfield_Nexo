@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs"
+import "@/cargar-entorno"
 import { join } from "node:path"
 
 import { PrismaPg } from "@prisma/adapter-pg"
@@ -12,7 +12,6 @@ import { sembrarCatalogos } from "@/organizaciones/catalogos/sembrador"
 // Usa DATABASE_URL_MIGRACIONES: los catálogos son de solo lectura para nexo_app.
 async function main(): Promise<void> {
   const log = pino()
-  if (existsSync(".env")) process.loadEnvFile(".env")
   const url = process.env.DATABASE_URL_MIGRACIONES
   if (!url) throw new Error("DATABASE_URL_MIGRACIONES no está definida")
   const prisma = new PrismaClient({
