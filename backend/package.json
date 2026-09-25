@@ -9,9 +9,9 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "lint": "eslint .",
-    "test": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage",
+    "test": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --coverage",
     "test:unit": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --selectProjects unit",
-    "test:integracion": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --selectProjects integracion",
+    "test:integracion": "prisma generate && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --selectProjects integracion",
     "generar": "prisma generate",
     "migrar": "prisma migrate deploy"
   },

@@ -27,7 +27,9 @@ organización, o si además la base de datos debe imponer el filtro.
    con políticas sobre esas variables.
 4. La aplicación se conecta con un rol sin `BYPASSRLS` que no es dueño
    de las tablas (`nexo_app`); las migraciones usan otro
-   (`nexo_migrador`).
+   (`nexo_migrador`), que sí tiene `BYPASSRLS`: `FORCE ROW LEVEL SECURITY`
+   también aplica al dueño y las migraciones de datos deben ver todas las
+   filas. Ese rol no lo usa nunca la aplicación.
 5. Toda feature con endpoints mantiene su test de aislamiento
    (`stack/testing.md`), que ahora falla tanto si falla el guard como
    si falla la política.
