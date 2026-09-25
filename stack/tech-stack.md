@@ -39,6 +39,7 @@ Librerías de backend:
 | Uso | Librería |
 |---|---|
 | Auth | JWT: `@nestjs/jwt` + Passport |
+| Validación de DTOs | `class-validator` + `class-transformer` (con el `ValidationPipe` de NestJS). Aprobado el 2026-09-25 en la spec `organizaciones` |
 | Colas | BullMQ sobre Redis (recálculo de indicadores, exportaciones pesadas) |
 | Excel | ExcelJS (importación inicial de la matriz y exportación) |
 | Logs | nestjs-pino |
@@ -60,7 +61,11 @@ Librerías de backend:
 
 ## Tests
 
-Jest en ambos paquetes; Supertest para las pruebas HTTP del backend.
+- Jest en ambos paquetes; Supertest para las pruebas HTTP del backend.
+- **Playwright** para E2E de navegador en `frontend/`.
+- **k6** para pruebas de carga de los NFR de rendimiento.
+
+Playwright y k6 se aprobaron el 2026-09-25 en la spec `organizaciones`.
 La política está en `stack/testing.md`.
 
 ## Lint y formato

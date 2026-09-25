@@ -113,7 +113,7 @@ enum EstadoOrganizacion { EN_VALIDACION  DEVUELTA  APROBADA }
 enum TipoPersona        { JURIDICA  NATURAL }
 enum TipoDocumento      { CC  CE  PASAPORTE }
 enum ClaseRiesgo        { I  II  III  IV  V }
-enum RolOrganizacion    { LIDER_SST  LIDER_APOYO  PRACTICANTE }  // solo LIDER_SST en esta feature
+enum RolOrganizacion    { LIDER_SST }  // accesos agregará LIDER_APOYO y PRACTICANTE
 enum TipoDocumentoLegal { RUT  CAMARA_COMERCIO  CEDULA_REP_LEGAL  FORMULARIO_ARL  NO_AFILIACION_ARL }
 
 model Organizacion {
@@ -199,9 +199,9 @@ model Arl           { codigo String @id  nombre String }
 model CatalogoVersion { catalogo String @id  version String  fechaCorte DateTime }
 ```
 
-**Políticas RLS** (migración SQL, DEC-1). Variables de sesión:
-`app.usuario_id` y `app.es_admin` (esta feature) y
-`app.organizacion_id` (reservada para los módulos tenant):
+**Políticas RLS** (migración SQL, DEC-1). Variables de sesión que usa
+esta feature: `app.usuario_id` y `app.es_admin`
+([ADR-0001](../../docs/adr/0001-aislamiento-multitenant-guard-rls.md)):
 
 | Tabla | SELECT / UPDATE | INSERT |
 |---|---|---|
@@ -228,18 +228,18 @@ Los errores de validación responden `400` con el campo en
 | Método y ruta | Quién | Qué hace | R*.* | Errores |
 |---|---|---|---|---|
 | `POST /organizaciones` | Autenticado | Registra organización + sedes (+ documentos en P2, multipart; DEC-4). Deja `EN_VALIDACION` y crea la membresía `LIDER_SST` | R1.*, R2.*, R3.1–R3.5, R4.1, R4.2, R7.5 | 400, 409 NIT registrado, 413 (R7.9), 415 (R7.3), 422 documentos faltantes (R7.5) |
-| `GET /organizaciones` | Autenticado | "Mis organizaciones" con conteo | R5.1–R5.3, R5.5, R5.7 | — |
-| `GET /organizaciones/:id` | Miembro o Admin | Detalle: identificación, sedes, estándares | R5.9, R6.1, R6.2 | 404 si no es miembro |
+| `GET /organizaciones` | Autenticado | "Mis organizaciones" con conteo. Cada elemento trae `puedeIngresar` (`true` solo si está `APROBADA`) y `porcentajeImplementacion` / `porcentajeCumplimiento` (`null` mientras D2 esté en MOCK → "Sin evaluar") | R5.1–R5.5, R5.7 | — |
+| `GET /organizaciones/:id` | Miembro o Administrador | Detalle: identificación, sedes, estándares | R5.9, R6.1, R6.2 | 404 si no es miembro |
 | `PUT /organizaciones/:id` | Líder SST miembro | Corrige datos y sedes (reemplazo completo del arreglo de sedes). `DEVUELTA`: todo editable. `APROBADA` (P3): todo salvo NIT y DV | R4.6, R4.8, R8.1–R8.6 | 404, 409 estado no editable (R4.8) o NIT en aprobada (R8.6) |
 | `POST /organizaciones/:id/reenvio` | Líder SST miembro | `DEVUELTA` → `EN_VALIDACION` | R4.7 | 404, 409 transición inválida, 422 (P2, R7.5) |
-| `GET /admin/organizaciones/validacion` | Admin | Cola `EN_VALIDACION` por `enviadaEn` ascendente | R5.8 | 403 |
-| `POST /admin/organizaciones/:id/aprobacion` | Admin | `EN_VALIDACION` → `APROBADA` | R4.3 | 403 (R4.9), 409 (R4.10) |
-| `POST /admin/organizaciones/:id/devolucion` | Admin | `{ motivo }` no vacío; `EN_VALIDACION` → `DEVUELTA` | R4.4, R4.5, R6.4 | 400 motivo vacío, 403, 409 |
+| `GET /admin/organizaciones/validacion` | Administrador | Cola `EN_VALIDACION` por `enviadaEn` ascendente | R5.8 | 403 |
+| `POST /admin/organizaciones/:id/aprobacion` | Administrador | `EN_VALIDACION` → `APROBADA` | R4.3 | 403 (R4.9), 409 (R4.10) |
+| `POST /admin/organizaciones/:id/devolucion` | Administrador | `{ motivo }` no vacío; `EN_VALIDACION` → `DEVUELTA` | R4.4, R4.5, R6.4 | 400 motivo vacío, 403, 409 |
 | `POST /estandares-aplicables/calculo` | Autenticado | Vista previa sin persistir: `{ sedes: [{ claseRiesgo, trabajadores }] }` → `{ estandares, riesgoMaximo, totalTrabajadores, regla }` (DEC-5) | R3.6 | 400 |
 | `GET /catalogos/departamentos` · `GET /catalogos/departamentos/:codigo/municipios` · `GET /catalogos/ciiu?q=` · `GET /catalogos/arl` | Autenticado | Catálogos; `ciiu` busca por código o palabra, máx. 20 resultados | R1.9, R2.5–R2.7 | — |
-| `GET /organizaciones/:id/documentos` (P2) | Miembro o Admin | Lista la versión vigente de cada tipo y su estado | R7.1, R7.6, R7.7 | 404 |
+| `GET /organizaciones/:id/documentos` (P2) | Miembro o Administrador | Lista la versión vigente de cada tipo y su estado | R7.1, R7.6, R7.7 | 404 |
 | `PUT /organizaciones/:id/documentos/:tipo` (P2) | Líder SST miembro | Carga una versión nueva (multipart, 1 archivo) | R7.2–R7.4, R7.9 | 404, 409 si está `EN_VALIDACION`, 413, 415 |
-| `GET /organizaciones/:id/documentos/:tipo/url` (P2) | Miembro o Admin | URL firmada de corta duración para ver el archivo | R7.6, R7.7 | 404 |
+| `GET /organizaciones/:id/documentos/:tipo/url` (P2) | Miembro o Administrador | URL firmada de corta duración para ver el archivo | R7.6, R7.7 | 404 |
 
 - `403` en las rutas de Administrador: ser o no Administrador no es un
   dato de otra organización, así que no hay nada que ocultar (R4.9).
@@ -336,6 +336,18 @@ de estándares es síncrono y trivial (R3.5).
   arrancar con `AUTH_MODO=mock` si `NODE_ENV=production`. Desmockear =
   sustituir el guard por el de `auth` — justifica D1, R4.9, R6.2.
 
+- **DEC-12**: R5.4 se impone en el servidor **en dos pasos**. En P1,
+  `GET /organizaciones` devuelve `puedeIngresar` y el service exporta
+  `puedeIngresar(usuarioId, organizacionId)`; el test de integración de
+  R5.4 comprueba que solo es `true` en `APROBADA`, y el E2E comprueba
+  que el frontend no ofrece "Ingresar" en las demás. Cuando exista
+  `auth` (D1), su endpoint para cambiar de organización activa llama a
+  `puedeIngresar()` y rechaza las no aprobadas, así que el token nunca
+  lleva una organización sin aprobar — justifica R5.4.
+  - Alternativa: endpoint propio de "ingreso" en este módulo
+    (rechazada: emitir el contexto de sesión es responsabilidad de
+    `auth`, y duplicaría ese flujo).
+
 ## Complejidad justificada
 
 | Qué | Por qué es necesario | Alternativa más simple rechazada porque |
@@ -348,15 +360,17 @@ de estándares es síncrono y trivial (R3.5).
 
 ## Despliegue
 
-`repo_type: custom`, runtime **TBD** (`repo-config.yaml`). Mientras
+`repo_type: custom`. El destino de despliegue es una pregunta abierta
+del repo (`repo-config.yaml > runtime.type`, `OPEN_QUESTION`). Mientras
 tanto la feature corre y se prueba con la infra local de Compose
 (`postgres`, `redis`, `minio`). Al crear el bucket se habilitan
 versionado y Object Lock (DEC-3); Object Lock no se puede activar
 después sobre un bucket existente. P1 se puede promover sin P2 (no
 toca MinIO).
 
-**Dependencias nuevas** (primer código del repo; requieren OK en G2 según
-`AGENTS.md` § *Dependencias nuevas*):
+**Dependencias nuevas** (primer código del repo; `AGENTS.md` §
+*Dependencias nuevas*). Aprobadas el 2026-09-25 salvo el cliente
+S3/MinIO, que se aprueba al llegar a P2:
 
 | Paquete | Uso | En `stack/` |
 |---|---|---|
@@ -364,17 +378,19 @@ toca MinIO).
 | `prisma`, `@prisma/client` | ORM y migraciones | Sí |
 | `nestjs-pino`, `pino` | Logs | Sí |
 | `jest`, `ts-jest`, `supertest` | Tests | Sí |
-| `class-validator`, `class-transformer` | Validación de DTOs en el backend | **No** — convención de NestJS; alternativa: Zod también en backend |
+| `class-validator`, `class-transformer` | Validación de DTOs en el backend | Sí — aprobado 2026-09-25 |
 | Cliente S3/MinIO (`minio` o `@aws-sdk/client-s3`) — P2 | Adaptador de almacenamiento y URLs firmadas | **No** — se elige al llegar a P2 |
 | `@testing-library/react`, `@testing-library/jest-dom` | Tests de componentes del frontend | Sí (`stack/testing.md`) |
+| `@playwright/test` | E2E de navegador (R3.6, R5.2, R5.4, R5.6) | Sí — aprobado 2026-09-25 |
+| k6 (binario, no paquete npm) | Carga (NFR1, NFR2) | Sí — aprobado 2026-09-25 |
 | Frontend: las del `package.json` del kit (Next 16, React 19, Tailwind 4, Chart.js, three, simplex-noise, Hugeicons, shadcn) | Base visual aprobada | Sí, salvo `three` y `simplex-noise`, que vienen con el kit aprobado |
 
 ### Configuración
 
 | Variable | Origen | Notas |
 |---|---|---|
-| `DATABASE_URL` | `.env` (local) / gestor de secretos (TBD) | Rol `nexo_app`, sin `BYPASSRLS` |
-| `DATABASE_URL_MIGRACIONES` | `.env` / gestor de secretos (TBD) | Rol `nexo_migrador`; solo para `prisma migrate` |
+| `DATABASE_URL` | `.env` (local) / gestor de secretos del runtime (pregunta abierta del repo, `stack/security.md`) | Rol `nexo_app`, sin `BYPASSRLS` |
+| `DATABASE_URL_MIGRACIONES` | `.env` / gestor de secretos del runtime (ídem) | Rol `nexo_migrador`; solo para `prisma migrate` |
 | `AUTH_MODO` | `.env` | `mock` mientras D1 esté en MOCK; prohibido en producción (DEC-11) |
 | `MINIO_ENDPOINT`, `MINIO_BUCKET_DOCUMENTOS` | `.env` | P2 |
 | `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` | Secreto, por referencia | P2 |
@@ -411,15 +427,15 @@ toca MinIO).
 
 ## Observabilidad
 
-- **Métricas**: N/A — no hay plataforma de métricas mientras el
-  runtime sea TBD. NFR1 y NFR2 se verifican con la prueba de carga de
-  la fase de Polish.
+- **Métricas**: N/A — no hay plataforma de métricas hasta que se
+  decida el runtime (`repo-config.yaml > runtime.type`). NFR1 y NFR2
+  se verifican con los scripts de k6 (`stack/testing.md`).
 - **Logs** (nestjs-pino, JSON): un evento `info` por transición —
   `organizacion.registrada`, `.aprobada`, `.devuelta`, `.reenviada`,
   `.editada`, `documento.cargado` — con `organizacionId`, `usuarioId`
   e id de petición. `warn` en `403`/`404` de rutas de organización, que
   son la señal de intentos de acceso cruzado.
-- **Alertas**: N/A — dependen del runtime (TBD).
+- **Alertas**: N/A — dependen del runtime, que el repo aún no decide.
 
 ## Conflicts resolved
 

@@ -101,8 +101,10 @@ Decisiones abiertas que se resuelven en el primer bolt de inception
 (`CONTEXTO-NEXO.md` §12) y que se registran como ADR en `docs/adr/`:
 
 1. Cuadrícula: TanStack Table (recomendado) o FortuneSheet.
-2. Aislamiento multi-tenant: solo guard, o guard + Row-Level Security
-   de Postgres.
+2. ~~Aislamiento multi-tenant: solo guard, o guard + Row-Level Security
+   de Postgres.~~ **Resuelta**: guard + RLS —
+   [ADR-0001](../docs/adr/0001-aislamiento-multitenant-guard-rls.md)
+   (spec `organizaciones`, DEC-1).
 3. Versionado del catálogo de estándares.
 4. Origen de las mediciones de indicadores (automáticas o manuales).
 5. Fuente de verdad del Excel maestro `decreto_1072.xlsx`.

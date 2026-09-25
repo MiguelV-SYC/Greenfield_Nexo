@@ -47,7 +47,7 @@
 - [ ] CHK-005 ¿Cero adjetivos sin métrica ("rápido", "intuitivo", "robusto", "escalable")? [Claridad]
 - [x] CHK-006 ¿Cero marcadores [NEEDS CLARIFICATION] pendientes? [Claridad] — 2026-09-25 /spec-clarify: R1.7 y R4.8 resueltos; 0 marcadores.
 - [ ] CHK-007 ¿Cada R*.* admite UNA sola interpretación razonable? [Claridad]
-- [ ] CHK-008 ¿Los términos de dominio se usan consistentemente (sin sinónimos intercambiados)? [Claridad]
+- [x] CHK-008 ¿Los términos de dominio se usan consistentemente (sin sinónimos intercambiados)? [Claridad] — 2026-09-25: glosario en Contexto (V7 de /spec-verify).
 
 ## Testeabilidad
 

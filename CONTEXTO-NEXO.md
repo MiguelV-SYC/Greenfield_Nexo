@@ -111,7 +111,7 @@ Referencia visual aprobada: `#view-indicadores` (SG-SST) y `#view-pesv-indicador
 
 ## 12. Decisiones abiertas (resolver en el primer bolt de inception)
 1. Cuadrícula: TanStack Table (recomendado) o FortuneSheet.
-2. Aislamiento multi-tenant: guard solo o guard + RLS.
+2. ~~Aislamiento multi-tenant: guard solo o guard + RLS.~~ **Resuelta (2026-09-25)**: guard + RLS de Postgres — `docs/adr/0001-aislamiento-multitenant-guard-rls.md`.
 3. Versionado del catálogo de estándares.
 4. Origen de las mediciones (automáticas vs manuales).
 5. Fuente de verdad del Excel maestro `decreto_1072.xlsx`.

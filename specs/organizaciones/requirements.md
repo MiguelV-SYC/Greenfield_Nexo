@@ -54,6 +54,12 @@ cómo una empresa entra a Nexo.
   Resolución 0312 de 2019 le aplican a la organización (7, 21 o 62),
   que es el dato del que parte la matriz legal.
 
+**Glosario**: *sede* = *centro de trabajo* (el mockup usa los dos; esta
+spec dice **sede**). *Administrador* = Administrador de la plataforma.
+*Registro* = alta de la organización por el Líder SST, que la envía a
+validación; *reenvío* = nuevo envío de una organización Devuelta.
+*Fecha de envío* = momento del último registro o reenvío.
+
 Base visual: `nexo-design-kit` — pantalla `/organizaciones`, asistente
 "Registrar nueva organización" (`#modal-nueva-organizacion`) y vista
 `#view-config` del mockup `brand/mockup/NexoV.5_mockup.html`. El mockup
@@ -165,8 +171,8 @@ manda en lo visual; las reglas de negocio las fija esta spec.
 **R2.1** THE SYSTEM SHALL exigir al menos una sede por organización.
          Tests: unit, integration
 
-**R2.2** WHEN se registra una sede, THE SYSTEM SHALL exigir nombre del
-         centro, dirección, departamento, municipio, clase de riesgo,
+**R2.2** WHEN se registra una sede, THE SYSTEM SHALL exigir nombre de la
+         sede, dirección, departamento, municipio, clase de riesgo,
          número de trabajadores y actividad económica.
          Tests: unit
 

@@ -10,11 +10,12 @@
 | **Unit** | Todo service y toda lógica de dominio (cálculo de indicadores, % verificado, estándares aplicables según la Res. 0312) | Jest |
 | **Integración HTTP** | Todo endpoint: validación, permisos por rol y aislamiento entre organizaciones | Jest + Supertest contra Postgres real |
 | **Componentes (frontend)** | Componentes con lógica: matriz editable, formularios | Jest + React Testing Library |
+| **E2E de navegador** | Todo `R*.*` que declare `Tests: e2e`: flujos de usuario completos contra backend real | Playwright |
+| **Carga** | Todo NFR que declare `Tests: load`, con el umbral del NFR como criterio de aprobación | k6 |
 
 - **Aislamiento multi-tenant**: toda feature con endpoints tiene al
   menos un test que intenta acceder a datos de otra organización y
   comprueba que falla.
-- E2E de navegador: no se exige en v1.
 
 ## Cobertura mínima
 
@@ -29,6 +30,10 @@ lógica, código generado (cliente Prisma, tipos OpenAPI) y
 - Jest en ambos paquetes (runner y cobertura).
 - Supertest para HTTP en el backend.
 - React Testing Library para componentes del frontend.
+- Playwright para E2E de navegador (Chromium; los demás navegadores
+  cuando exista CI).
+- k6 para carga: cada script declara los `thresholds` del NFR que
+  cubre (ej. `http_req_duration: ['p(95)<500']`).
 
 ## Convención `// Derived from R*.*`
 
@@ -60,6 +65,11 @@ cobertura.
 - Unit: co-located, `<archivo>.spec.ts`.
 - Integración HTTP: `backend/test/<modulo>.e2e-spec.ts`.
 - Componentes: co-located, `<componente>.spec.tsx`.
+- E2E: `frontend/e2e/<flujo>.e2e.ts` (Playwright), contra la infra
+  de Compose.
+- Carga: `backend/test/carga/<escenario>.k6.js`, contra la infra de
+  Compose con datos sembrados por el propio script.
+- Los scripts de k6 también llevan `// Derived from NFR<n>` al inicio.
 - Los nombres de los tests se escriben en español.
 
 ## TDD vs test-after
@@ -72,6 +82,9 @@ primero por defecto.
 ## CI gates de tests
 
 - En PR: lint, unit, integración y cobertura ≥ 80 %.
+- E2E (Playwright) en PR para los flujos declarados `e2e` del slice
+  que cambia.
+- Carga (k6): antes de promover a `qa`, no en cada PR.
 - OPEN_QUESTION: plataforma de CI. Se decide junto con el deploy
   target. Mientras tanto se ejecuta en local con `pnpm test` antes de
   abrir el PR.
