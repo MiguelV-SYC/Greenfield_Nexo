@@ -5,6 +5,9 @@ import type { NextConfig } from "next"
 const API = process.env.NEXO_API_URL ?? "http://localhost:3000"
 
 const nextConfig: NextConfig = {
+  // Solo modo desarrollo: los E2E abren la app en 127.0.0.1 y Next bloquea
+  // por defecto sus recursos de desarrollo a orígenes distintos de localhost.
+  allowedDevOrigins: ["127.0.0.1"],
   async rewrites() {
     return [{ source: "/api/v1/:ruta*", destination: `${API}/api/v1/:ruta*` }]
   },

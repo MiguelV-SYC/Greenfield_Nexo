@@ -138,7 +138,8 @@ export function AsistenteRegistro({
         {catalogos.estado === "listo" && (
           <FormProvider {...form}>
             <form onSubmit={registrar} noValidate>
-              <div className="wizard-steps" aria-label={`Paso ${paso} de 2`}>
+              <p className="sr-only">{`Paso ${paso} de 2`}</p>
+              <div className="wizard-steps" aria-hidden>
                 <div
                   className={cn(
                     "wizard-step-dot",
