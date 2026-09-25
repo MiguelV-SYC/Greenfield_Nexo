@@ -58,17 +58,17 @@ T6: done | commit 87167b3 · 2026-09-25
 T7: done | commit 89329c6, 207493a · 2026-09-25
 T8: done | commit 2acbbe0 · 2026-09-25
 T9: done | commit ec99372 · 2026-09-25
-T10: pending |
-T11: pending |
-T12: pending |
-T13: pending |
-T14: pending |
-T15: pending |
-T16: pending |
-T17: pending |
-T18: pending |
-T19: pending |
-T20: pending |
+T10: done | commit 915c4f9 · 2026-09-25
+T11: done | commit 618048d · 2026-09-25
+T12: done | commit 815c3a6 · 2026-09-25
+T13: done | commit 0f5eacf · 2026-09-25
+T14: done | commit c7b613f · 2026-09-25
+T15: done | commit f945e0a · 2026-09-25
+T16: done | commit 5d73ded · 2026-09-25
+T17: done | commit 6e3cbeb, 33a4c80 · 2026-09-25
+T18: done | commit 5e5aae7 · 2026-09-25
+T19: done | commit c619b38 · 2026-09-25
+T20: done | commit 9a3fb93 · 2026-09-25
 T21: pending |
 T22: pending |
 T23: pending |
@@ -96,3 +96,4 @@ D6 (concepto jurídico Ley 1581 — BLOCK sobre datos reales del piloto): NEGOTI
 - 2026-09-25: /spec-implement derivó tasks.md (T1–T30, 6 fases).
 - 2026-09-25: fase 0 (Setup) completa; checkpoint verde: `pnpm -r build|lint|test` desde la raíz, Postgres sano en Compose y el frontend sirve las pantallas del kit. Desvíos menores de archivos frente a tasks.md: T3 usa `jest.config.js` (no `.ts`, para no depender de ts-node) con proyectos unit+integración en un solo config; T4 usa `01-roles.sh` (no `.sql`) para leer contraseñas del entorno. NestJS 12 es ESM-only: el backend sigue la plantilla oficial CJS (`require(esm)` de Node 24) y Jest corre con `--experimental-vm-modules`.
 - 2026-09-25: fase 1 (Foundational) completa; checkpoint verde: migraciones 0001–0002 y siembra aplicadas en Compose, `pnpm -r build|lint|test` (58 tests, 98 % de líneas). Decisiones y desvíos: Prisma 7.10.0 con `@prisma/adapter-pg` + `pg` (aprobados). T6 implementa el contexto de tenant como `BaseDatosTenant.ejecutarComo()` (transacción por unidad de trabajo con `set_config` local) en vez de una extensión de Prisma por operación: cubre registros multi-tabla en una sola transacción. El registro inserta la organización sin RETURNING y fija `app.organizacion_nueva` para crear la membresía (RLS). `nexo_migrador` recibe BYPASSRLS (FORCE aplica al dueño; ADR-0001 actualizado). T9: con el OK del owner de D3 se usó la DIVIPOLA oficial (el mockup no traía códigos DANE); D3 pasa a LIVE y CIIU/ARL siguen en MOCK. Entorno: Postgres en 5433 (el 5432 lo ocupa un PostgreSQL 18 nativo) y los `.env` locales apuntan a la IP de la VM de Podman (infra/README.md). T7 tuvo un commit con lint en rojo (89329c6), corregido en 207493a.
+- 2026-09-25: fase 2 (slice P1) completa; checkpoint verde: backend 149 tests (99 % líneas), frontend 39 tests (96 % líneas), 4 E2E de la prueba independiente de P1 con axe-core sin violaciones graves. P1 queda listo para promover a `pruebas`, pero el runtime sigue sin decidir (`repo-config.yaml`). Desvíos respecto de design.md que requieren `/spec-amend`: (1) el frontend usa `NEXO_API_URL` en el servidor y reescritura de `/api/v1` en `next.config.ts` en vez de `NEXT_PUBLIC_API_URL` (sin CORS); (2) la cobertura del frontend se mide sobre el código de la feature (`src/lib/api`, `src/components/organizaciones`), y las páginas y el kit visual se cubren con los E2E; (3) los DTO de respuesta declaran los campos nullable como obligatorios. Correcciones hechas en el camino: `main.ts` no cargaba `backend/.env` (T17); un `aria-label` prohibido en el indicador de pasos del asistente (T20). Pendientes conocidos: el Topbar del kit muestra un usuario fijo ("Administrador"/"MA"); la revisión del Administrador muestra el código DANE del municipio, no su nombre; el NIT de ejemplo del mockup (890206391-5) no tiene un DV válido. `next dev` genera `frontend/AGENTS.md` y `frontend/CLAUDE.md`: sin versionar hasta que el dev decida.

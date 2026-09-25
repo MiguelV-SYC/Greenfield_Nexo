@@ -111,75 +111,75 @@ de RLS, auditoría, guard y catálogos verdes.
 - **Cubre**: R1.5, R1.6
 - **Archivos**: `backend/src/organizaciones/dominio/digito-verificacion.ts` (+ `.spec.ts`)
 - **Acceptance**:
-  - [ ] Tests primero con NIT reales conocidos y casos inválidos (`// Derived from R1.6`)
+  - [x] Tests primero con NIT reales conocidos y casos inválidos (`// Derived from R1.6`)
 
 ## T11 — Dominio y endpoint de estándares aplicables [S] [P]
 - **Cubre**: R3.1, R3.2, R3.3, R3.4, R3.5, R3.6
 - **Archivos**: `backend/src/organizaciones/dominio/estandares-aplicables.ts` (+ `.spec.ts`), `backend/src/organizaciones/estandares.controller.ts`
 - **Acceptance**:
-  - [ ] Tests primero con los bordes 10/11 y 50/51 y riesgo IV–V con ≤ 50 (62)
-  - [ ] `POST /estandares-aplicables/calculo` (DEC-5)
+  - [x] Tests primero con los bordes 10/11 y 50/51 y riesgo IV–V con ≤ 50 (62)
+  - [x] `POST /estandares-aplicables/calculo` (DEC-5)
 
 ## T12 — Dominio: transiciones de estado [S] [P]
 - **Cubre**: R4.3, R4.4, R4.5, R4.6, R4.7, R4.8, R4.10, R8.6
 - **Archivos**: `backend/src/organizaciones/dominio/transiciones.ts` (+ `.spec.ts`)
 - **Acceptance**:
-  - [ ] Tabla de transiciones por estado y rol; toda transición no listada se rechaza
+  - [x] Tabla de transiciones por estado y rol; toda transición no listada se rechaza
 
 ## T13 — Registro de organización [M]
 - **Cubre**: R1.1, R1.2, R1.3, R1.4, R1.7, R1.8, R1.9, R2.1, R2.2, R2.5, R2.6, R2.7, R2.8, R3.5, R4.1, R4.2, R6.3
 - **Archivos**: `backend/src/organizaciones/organizaciones.{module,controller,service}.ts`, `backend/src/organizaciones/dto/`, `backend/test/organizaciones-registro.e2e-spec.ts`
 - **Acceptance**:
-  - [ ] `POST /organizaciones` en una transacción: organización, sedes, derivados (DEC-6), membresía y auditoría
-  - [ ] `400` por campo, `409` por NIT duplicado en cualquier estado
+  - [x] `POST /organizaciones` en una transacción: organización, sedes, derivados (DEC-6), membresía y auditoría
+  - [x] `400` por campo, `409` por NIT duplicado en cualquier estado
 
 ## T14 — Mis organizaciones y detalle [M]
 - **Cubre**: R5.1, R5.2, R5.3, R5.4, R5.5, R5.7, R5.9, R6.1, R6.2, R1.8, D2
 - **Archivos**: `backend/src/organizaciones/organizaciones.{controller,service}.ts`, `backend/test/organizaciones-consulta.e2e-spec.ts`
 - **Acceptance**:
-  - [ ] `GET /organizaciones` con `puedeIngresar` y porcentajes `null` (DEC-12, V9)
-  - [ ] `GET /organizaciones/:id` → `404` para no miembros (test de aislamiento)
+  - [x] `GET /organizaciones` con `puedeIngresar` y porcentajes `null` (DEC-12, V9)
+  - [x] `GET /organizaciones/:id` → `404` para no miembros (test de aislamiento)
 
 ## T15 — Validación del Administrador [M]
 - **Cubre**: R4.3, R4.4, R4.5, R4.9, R4.10, R5.8, R6.4
 - **Archivos**: `backend/src/organizaciones/admin-validacion.controller.ts`, `backend/test/organizaciones-validacion.e2e-spec.ts`
 - **Acceptance**:
-  - [ ] Cola por `enviadaEn` ascendente; aprobar; devolver con motivo no vacío
-  - [ ] `403` para no Administrador y `409` fuera de `EN_VALIDACION`
+  - [x] Cola por `enviadaEn` ascendente; aprobar; devolver con motivo no vacío
+  - [x] `403` para no Administrador y `409` fuera de `EN_VALIDACION`
 
 ## T16 — Corrección y reenvío [M]
 - **Cubre**: R4.6, R4.7, R4.8
 - **Archivos**: `backend/src/organizaciones/organizaciones.{controller,service}.ts`, `backend/test/organizaciones-correccion.e2e-spec.ts`
 - **Acceptance**:
-  - [ ] `PUT /organizaciones/:id` en `DEVUELTA` (incluye NIT); `409` en `EN_VALIDACION`
-  - [ ] `POST /organizaciones/:id/reenvio` actualiza `enviadaEn`
+  - [x] `PUT /organizaciones/:id` en `DEVUELTA` (incluye NIT); `409` en `EN_VALIDACION`
+  - [x] `POST /organizaciones/:id/reenvio` actualiza `enviadaEn`
 
 ## T17 — Frontend: cliente API y Mis organizaciones [M]
 - **Cubre**: R5.1, R5.2, R5.3, R5.4, R5.5, R5.6, R5.7, R5.10, R5.11, R1.8, D1, D2
 - **Archivos**: `frontend/src/lib/api/`, `frontend/src/app/organizaciones/`, `frontend/src/components/organizaciones/`
 - **Acceptance**:
-  - [ ] Cliente generado del OpenAPI; tarjetas con estado, "Sin evaluar", motivo de devolución e "Ingresar" solo si `puedeIngresar`
-  - [ ] Estados vacío, de carga y de error con reintento (tests de componente)
+  - [x] Cliente generado del OpenAPI; tarjetas con estado, "Sin evaluar", motivo de devolución e "Ingresar" solo si `puedeIngresar`
+  - [x] Estados vacío, de carga y de error con reintento (tests de componente)
 
 ## T18 — Frontend: asistente de registro, pasos 1–2 [M]
 - **Cubre**: R1.1, R1.2, R1.3, R1.4, R1.5, R1.6, R1.7, R2.1, R2.2, R2.5, R2.6, R2.7, R2.8, R3.6, R5.10, R5.11
 - **Archivos**: `frontend/src/components/organizaciones/asistente/`
 - **Acceptance**:
-  - [ ] Portado de `#modal-nueva-organizacion` con las clases V5; regla 0312 corregida (DEC-10)
-  - [ ] Vista previa de estándares vía `POST /estandares-aplicables/calculo` con debounce
+  - [x] Portado de `#modal-nueva-organizacion` con las clases V5; regla 0312 corregida (DEC-10)
+  - [x] Vista previa de estándares vía `POST /estandares-aplicables/calculo` con debounce
 
 ## T19 — Frontend: cola de validación [M]
 - **Cubre**: R4.3, R4.4, R4.5, R5.8, R5.9, R5.10, R5.11
 - **Archivos**: `frontend/src/app/admin/validacion/`
 - **Acceptance**:
-  - [ ] Con primitivas V5 (DEC-9); devolución con `Modal` y motivo obligatorio
+  - [x] Con primitivas V5 (DEC-9); devolución con `Modal` y motivo obligatorio
 
 ## T20 — Integración P1: E2E y accesibilidad [M]
 - **Cubre**: R3.6, R5.2, R5.4, R5.6, R5.11, NFR6
 - **Archivos**: `frontend/playwright.config.ts`, `frontend/e2e/p1-registro-validacion.e2e.ts`
 - **Acceptance**:
-  - [ ] Prueba independiente de P1 de `requirements.md` pasa de punta a punta
-  - [ ] axe-core sin violaciones `serious`/`critical` en las pantallas de P1
+  - [x] Prueba independiente de P1 de `requirements.md` pasa de punta a punta
+  - [x] axe-core sin violaciones `serious`/`critical` en las pantallas de P1
 
 **Checkpoint fase 2**: P1 desplegable a `pruebas` por sí solo —
 candidato a primera promoción (`/spec-promote --to pruebas`).
