@@ -67,40 +67,40 @@ del kit sin cambios.
 - **Cubre**: R1.1, R1.3, R2.1, R2.3, R2.4, R4.2, R6.3 (estructura)
 - **Archivos**: `backend/prisma/schema.prisma`, `backend/prisma/migrations/0001_*`, `backend/src/common/prisma/`
 - **Acceptance**:
-  - [ ] Modelos `Organizacion`, `Sede`, `MiembroOrganizacion`, `AuditoriaCambio` y catálogos de `design.md`
-  - [ ] `CHECK (trabajadores >= 1)`, `nit` único, grants de `nexo_app` sin `DELETE` en `AuditoriaCambio`
-  - [ ] `prisma migrate deploy` con `nexo_migrador` verde contra Compose
+  - [x] Modelos `Organizacion`, `Sede`, `MiembroOrganizacion`, `AuditoriaCambio` y catálogos de `design.md`
+  - [x] `CHECK (trabajadores >= 1)`, `nit` único, grants de `nexo_app` sin `DELETE` en `AuditoriaCambio`
+  - [x] `prisma migrate deploy` con `nexo_migrador` verde contra Compose
 
 ## T6 — RLS y contexto de tenant [M]
 - **Cubre**: R6.1, R6.2, NFR3
 - **Archivos**: `backend/prisma/migrations/0002_rls/`, `backend/src/common/tenant/`, `backend/test/rls.e2e-spec.ts`
 - **Acceptance**:
-  - [ ] `ENABLE` + `FORCE ROW LEVEL SECURITY` y políticas de la tabla RLS de `design.md`
-  - [ ] Extensión de Prisma: transacción + `set_config(..., true)` por operación
-  - [ ] Tests (`// Derived from R6.1`): un usuario sin membresía lee 0 filas; sin contexto, 0 filas; el Administrador lee todas
+  - [x] `ENABLE` + `FORCE ROW LEVEL SECURITY` y políticas de la tabla RLS de `design.md`
+  - [x] Extensión de Prisma: transacción + `set_config(..., true)` por operación
+  - [x] Tests (`// Derived from R6.1`): un usuario sin membresía lee 0 filas; sin contexto, 0 filas; el Administrador lee todas
 
 ## T7 — Identidad simulada (D1) [S] [P]
 - **Cubre**: R4.9, R6.2, D1
 - **Archivos**: `backend/src/common/auth/`, `specs/organizaciones/mocks/usuario-actual.mock.ts`
 - **Acceptance**:
-  - [ ] Guard con `AUTH_MODO=mock` y cabecera `x-usuario-mock` (DEC-11)
-  - [ ] Guard de Administrador para `/admin/*` → `403`
-  - [ ] El arranque falla con `AUTH_MODO=mock` y `NODE_ENV=production`
+  - [x] Guard con `AUTH_MODO=mock` y cabecera `x-usuario-mock` (DEC-11)
+  - [x] Guard de Administrador para `/admin/*` → `403`
+  - [x] El arranque falla con `AUTH_MODO=mock` y `NODE_ENV=production`
 
 ## T8 — Auditoría append-only [S] [P]
 - **Cubre**: R6.3, R6.4, NFR4
 - **Archivos**: `backend/src/common/auditoria/`
 - **Acceptance**:
-  - [ ] Servicio que registra quién, cuándo, entidad, acción, valor anterior/nuevo y motivo
-  - [ ] Test: `nexo_app` no puede actualizar ni borrar registros de auditoría
+  - [x] Servicio que registra quién, cuándo, entidad, acción, valor anterior/nuevo y motivo
+  - [x] Test: `nexo_app` no puede actualizar ni borrar registros de auditoría
 
 ## T9 — Catálogos DIVIPOLA, CIIU y ARL [M] [P]
 - **Cubre**: R1.9, R2.5, R2.7, D3, D4, D5
 - **Archivos**: `backend/prisma/catalogos/*.json`, `backend/prisma/seed.ts`, `backend/src/organizaciones/catalogos/`
 - **Acceptance**:
-  - [ ] JSON mock del mockup V5 con `CatalogoVersion` (DEC-7)
-  - [ ] `GET /catalogos/departamentos`, `/departamentos/:codigo/municipios`, `/ciiu?q=` (máx. 20), `/arl`
-  - [ ] Tests de búsqueda CIIU por código y por palabra
+  - [x] JSON mock del mockup V5 con `CatalogoVersion` (DEC-7)
+  - [x] `GET /catalogos/departamentos`, `/departamentos/:codigo/municipios`, `/ciiu?q=` (máx. 20), `/arl`
+  - [x] Tests de búsqueda CIIU por código y por palabra
 
 **Checkpoint fase 1**: migraciones y seed aplicados sobre Compose; tests
 de RLS, auditoría, guard y catálogos verdes.
