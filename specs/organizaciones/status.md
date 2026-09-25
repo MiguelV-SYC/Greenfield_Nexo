@@ -42,7 +42,7 @@ updated_by: "@MiguelV-SYC"
 
 | Gate | Qué firma | Estado |
 |---|---|---|
-| G2 — requirements + design | tech lead | pending |
+| G2 — requirements + design | tech lead | ✅ signed 2026-09-25 by m.villamizar@syc.com.co (commit 9ad3f16) |
 | G3 — code review (por PR) | 1+ reviewer | pending |
 | G4 — QA sign-off | QA | pending |
 | G5 — Ops sign-off (pre-prod) | Ops + tech lead | pending |
@@ -63,3 +63,4 @@ D6 (concepto jurídico Ley 1581 — BLOCK sobre datos reales del piloto): NEGOTI
 ## Notas
 
 - 2026-09-25: spec creada con /spec-new. Base visual: `nexo-design-kit` (pantalla `/organizaciones`, asistente `#modal-nueva-organizacion`, vista `#view-config`). Quedan 2 `[NEEDS CLARIFICATION]` (R1.7, R4.8).
+- 2026-09-25: G2 firmado por Miguel Angel Villamizar sobre 9ad3f16. Checklist 25/25, 0 OPEN_QUESTIONS, 0 [NEEDS CLARIFICATION], design.md resuelto (DEC-1..DEC-13), /spec-verify --pre-g2 sin CRITICAL. Self-approval: un solo dev/lead. Los [E10] de spec-lint esperan a que /spec-implement derive tasks.md. D6 (Ley 1581) bloquea cargar documentos reales del piloto.
