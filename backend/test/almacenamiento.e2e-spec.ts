@@ -70,7 +70,10 @@ describe("Almacenamiento de documentos en MinIO (T21)", () => {
     })
     expect(v1.version).not.toBe(v2.version)
     const versiones = await s3.send(
-      new ListObjectVersionsCommand({ Bucket: configuracion.bucket, Prefix: k }),
+      new ListObjectVersionsCommand({
+        Bucket: configuracion.bucket,
+        Prefix: k,
+      }),
     )
     expect(versiones.Versions?.map((v) => v.VersionId).sort()).toEqual(
       [v1.version, v2.version].sort(),
@@ -96,7 +99,9 @@ describe("Almacenamiento de documentos en MinIO (T21)", () => {
       ),
     ).rejects.toMatchObject({ name: "AccessDenied" })
     await expect(
-      s3.send(new DeleteObjectCommand({ Bucket: configuracion.bucket, Key: k })),
+      s3.send(
+        new DeleteObjectCommand({ Bucket: configuracion.bucket, Key: k }),
+      ),
     ).rejects.toMatchObject({ name: "AccessDenied" })
   })
 
@@ -113,11 +118,14 @@ describe("Almacenamiento de documentos en MinIO (T21)", () => {
       contenido: pdf("segunda"),
       tipoMime: "application/pdf",
     })
-    const url = await almacenamiento.urlFirmada(k, version, {
+    const antes = Date.now()
+    const { url, expiraEn } = await almacenamiento.urlFirmada(k, version, {
       nombreArchivo: "rut año.pdf",
       tipoMime: "application/pdf",
     })
     expect(new URL(url).searchParams.get("X-Amz-Expires")).toBe("300")
+    expect(expiraEn.getTime() - antes).toBeGreaterThanOrEqual(300_000)
+    expect(expiraEn.getTime() - antes).toBeLessThan(305_000)
     const respuesta = await fetch(url)
     expect(respuesta.status).toBe(200)
     expect(respuesta.headers.get("content-type")).toBe("application/pdf")

@@ -203,8 +203,8 @@ candidato a primera promoción (`/spec-promote --to pruebas`).
 - **Cubre**: R7.2, R7.3, R7.4, R7.6, R7.7, R7.9
 - **Archivos**: `backend/src/organizaciones/documentos/`, `backend/test/documentos.e2e-spec.ts`
 - **Acceptance**:
-  - [ ] Tipo verificado por firma del archivo; `413` sobre 10 MB antes de leer el cuerpo completo
-  - [ ] URL firmada de 5 minutos solo para miembros y Administrador
+  - [x] Tipo verificado por firma del archivo; `413` sobre 10 MB antes de leer el cuerpo completo (multer corta en memoria al pasar el límite)
+  - [x] URL firmada de 5 minutos solo para miembros y Administrador
 
 ## T24 — Registro multipart y documentos obligatorios [M]
 - **Cubre**: R7.5

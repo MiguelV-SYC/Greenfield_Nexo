@@ -9,6 +9,7 @@ import {
   AlmacenamientoArchivos,
   type ArchivoAGuardar,
   type OpcionesUrlFirmada,
+  type UrlFirmada,
 } from "./almacenamiento-archivos"
 import type { ConfiguracionAlmacenamiento } from "./configuracion-almacenamiento"
 
@@ -52,11 +53,11 @@ export class AlmacenamientoMinio extends AlmacenamientoArchivos {
     return { version: respuesta.VersionId }
   }
 
-  urlFirmada(
+  async urlFirmada(
     clave: string,
     version: string,
     { nombreArchivo, tipoMime }: OpcionesUrlFirmada,
-  ): Promise<string> {
+  ): Promise<UrlFirmada> {
     const comando = new GetObjectCommand({
       Bucket: this.configuracion.bucket,
       Key: clave,
@@ -64,8 +65,11 @@ export class AlmacenamientoMinio extends AlmacenamientoArchivos {
       ResponseContentType: tipoMime,
       ResponseContentDisposition: `inline; filename*=UTF-8''${encodeURIComponent(nombreArchivo)}`,
     })
-    return getSignedUrl(this.cliente, comando, {
-      expiresIn: this.configuracion.ttlUrlFirmadaSegundos,
+    const vigencia = this.configuracion.ttlUrlFirmadaSegundos
+    const expiraEn = new Date(Date.now() + vigencia * 1000)
+    const url = await getSignedUrl(this.cliente, comando, {
+      expiresIn: vigencia,
     })
+    return { url, expiraEn }
   }
 }

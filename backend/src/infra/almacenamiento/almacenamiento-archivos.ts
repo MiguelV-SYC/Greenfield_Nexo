@@ -4,6 +4,11 @@ export interface ArchivoAGuardar {
   tipoMime: string
 }
 
+export interface UrlFirmada {
+  url: string
+  expiraEn: Date
+}
+
 export interface OpcionesUrlFirmada {
   /** Nombre con el que el navegador muestra o descarga el archivo. */
   nombreArchivo: string
@@ -24,5 +29,5 @@ export abstract class AlmacenamientoArchivos {
     clave: string,
     version: string,
     opciones: OpcionesUrlFirmada,
-  ): Promise<string>
+  ): Promise<UrlFirmada>
 }

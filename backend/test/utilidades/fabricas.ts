@@ -1,5 +1,6 @@
 import type { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
+import request from "supertest"
 import type { App } from "supertest/types"
 
 import { AppModule } from "@/app.module"
@@ -47,4 +48,30 @@ export function sedeValida(sobrescribir: Record<string, unknown> = {}) {
     ciiuCodigo: "6201",
     ...sobrescribir,
   }
+}
+
+/**
+ * PDF ficticio (D6, Ley 1581: nunca documentos reales del piloto). Con
+ * `tamano`, se rellena hasta ese número exacto de bytes.
+ */
+export function pdfFicticio(texto: string, tamano?: number): Buffer {
+  const base = Buffer.from(`%PDF-1.7
+% documento ficticio: ${texto}
+`)
+  if (tamano === undefined) return Buffer.concat([base, Buffer.from("%%EOF")])
+  return Buffer.concat([base, Buffer.alloc(tamano - base.length, 0x20)])
+}
+
+/** Registra una organización válida y devuelve su id. */
+export async function registrarOrganizacion(
+  app: INestApplication<App>,
+  cabeceras: Record<string, string>,
+  cuerpo: Record<string, unknown> = registroValido(),
+): Promise<string> {
+  const r = await request(app.getHttpServer())
+    .post("/api/v1/organizaciones")
+    .set(cabeceras)
+    .send(cuerpo)
+  if (r.status !== 201) throw new Error(`Registro falló: ${r.status}`)
+  return r.body.id as string
 }
