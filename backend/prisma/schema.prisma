@@ -37,6 +37,16 @@ enum ClaseRiesgo {
   V
 }
 
+// R7.1: RUT, Cámara de Comercio, cédula del representante legal y formulario
+// de afiliación a ARL son obligatorios; el certificado de no afiliación, no.
+enum TipoDocumentoLegal {
+  RUT
+  CAMARA_COMERCIO
+  CEDULA_REP_LEGAL
+  FORMULARIO_ARL
+  NO_AFILIACION_ARL
+}
+
 // accesos agregará LIDER_APOYO y PRACTICANTE (design.md, V5).
 enum RolOrganizacion {
   LIDER_SST
@@ -65,6 +75,7 @@ model Organizacion {
   arl                  Arl?                  @relation(fields: [arlCodigo], references: [codigo])
   sedes                Sede[]
   miembros             MiembroOrganizacion[]
+  documentos           DocumentoLegal[]
 
   @@index([estado, enviadaEn])
 }
@@ -96,6 +107,25 @@ model MiembroOrganizacion {
 
   @@unique([organizacionId, usuarioId])
   @@index([usuarioId])
+}
+
+// P2. Una fila por versión cargada; ninguna se borra ni se modifica (R7.4,
+// R7.8). El archivo vive en MinIO con Object Lock (DEC-3).
+model DocumentoLegal {
+  id             String             @id @default(uuid()) @db.Uuid
+  organizacionId String             @db.Uuid
+  tipo           TipoDocumentoLegal
+  version        Int
+  objetoClave    String
+  objetoVersion  String
+  nombreArchivo  String
+  tipoMime       String
+  tamanoBytes    Int
+  cargadoPor     String
+  cargadoEn      DateTime           @default(now()) @db.Timestamptz(3)
+  organizacion   Organizacion       @relation(fields: [organizacionId], references: [id])
+
+  @@unique([organizacionId, tipo, version])
 }
 
 model AuditoriaCambio {

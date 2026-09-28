@@ -28,6 +28,7 @@ export function clienteMigrador(): PrismaClient {
 }
 
 const TABLAS_DE_NEGOCIO = [
+  "DocumentoLegal",
   "AuditoriaCambio",
   "MiembroOrganizacion",
   "Sede",

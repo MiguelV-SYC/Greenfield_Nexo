@@ -197,7 +197,7 @@ candidato a primera promoción (`/spec-promote --to pruebas`).
 - **Cubre**: R7.1, R7.4, R7.8
 - **Archivos**: `backend/prisma/schema.prisma`, `backend/prisma/migrations/0003_documentos/`
 - **Acceptance**:
-  - [ ] `DocumentoLegal` con RLS y sin `DELETE` para `nexo_app`
+  - [x] `DocumentoLegal` con RLS y sin `DELETE` para `nexo_app`
 
 ## T23 — Carga, listado y URL firmada [M]
 - **Cubre**: R7.2, R7.3, R7.4, R7.6, R7.7, R7.9
