@@ -8,7 +8,11 @@ import {
   limpiarBase,
   sembrarCatalogoMinimo,
 } from "./utilidades/bd"
-import { crearAplicacion, registroValido } from "./utilidades/fabricas"
+import {
+  crearAplicacion,
+  registroValido,
+  solicitudRegistro,
+} from "./utilidades/fabricas"
 
 const ADMIN = { "x-usuario-mock": "admin-1;admin" }
 const LIDER = { "x-usuario-mock": "lider-a" }
@@ -37,16 +41,15 @@ describe("Validación del Administrador (T15)", () => {
     await sembrarCatalogoMinimo(migrador)
     ids = []
     for (const [nit, dv] of NITS) {
-      const r = await http()
-        .post("/api/v1/organizaciones")
-        .set(LIDER)
-        .send(
-          registroValido({
-            nit,
-            digitoVerificacion: dv,
-            razonSocial: `Org ${nit}`,
-          }),
-        )
+      const r = await solicitudRegistro(
+        app,
+        LIDER,
+        registroValido({
+          nit,
+          digitoVerificacion: dv,
+          razonSocial: `Org ${nit}`,
+        }),
+      )
       ids.push(r.body.id)
     }
   })

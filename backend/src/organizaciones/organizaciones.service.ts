@@ -14,6 +14,15 @@ import {
   type TransaccionBd,
 } from "@/common/tenant/base-datos-tenant"
 import { excepcionDeCampos } from "@/common/validacion/errores-validacion"
+import { DocumentosService } from "./documentos/documentos.service"
+import {
+  type ArchivosPorTipo,
+  excepcionDocumentosFaltantes,
+} from "./documentos/registro-multipart"
+import {
+  type TipoDocumentoLegal,
+  documentosFaltantes,
+} from "./dominio/documentos-legales"
 import { calcularEstandaresAplicables } from "./dominio/estandares-aplicables"
 import type { OrganizacionDto } from "./dto/organizacion.dto"
 import type { RegistrarOrganizacionDto } from "./dto/registrar-organizacion.dto"
@@ -37,15 +46,24 @@ export class OrganizacionesService {
     private readonly prisma: PrismaService,
     private readonly bd: BaseDatosTenant,
     private readonly auditoria: AuditoriaService,
+    private readonly documentos: DocumentosService,
   ) {}
 
-  /** R1–R4.2: registra y deja la organización En validación. */
+  /**
+   * R1–R4.2: registra y deja la organización En validación, con sus
+   * documentos legales en la misma operación (DEC-4, R7.5).
+   */
   async registrar(
     usuario: UsuarioActual,
     datos: RegistrarOrganizacionDto,
+    archivos: ArchivosPorTipo = {},
   ): Promise<OrganizacionDto> {
     const errores = await validarReferencias(this.prisma, datos)
     if (errores.length > 0) throw excepcionDeCampos(errores)
+    const faltantes = documentosFaltantes(
+      Object.keys(archivos) as TipoDocumentoLegal[],
+    )
+    if (faltantes.length > 0) throw excepcionDocumentosFaltantes(faltantes)
     const id = randomUUID()
     const contexto = {
       usuarioId: usuario.id,
@@ -53,9 +71,11 @@ export class OrganizacionesService {
       organizacionNueva: id,
     }
     try {
-      return await this.bd.ejecutarComo(contexto, (tx) =>
-        this.crear(tx, id, usuario, datos),
-      )
+      return await this.bd.ejecutarComo(contexto, async (tx) => {
+        const detalle = await this.crear(tx, id, usuario, datos)
+        await this.guardarDocumentos(tx, id, usuario, archivos)
+        return detalle
+      })
     } catch (error) {
       // R1.7: el NIT es único entre organizaciones en cualquier estado.
       if (esNitDuplicado(error))
@@ -113,6 +133,23 @@ export class OrganizacionesService {
         }),
     )
     return aprobada === 1
+  }
+
+  private async guardarDocumentos(
+    tx: TransaccionBd,
+    id: string,
+    usuario: UsuarioActual,
+    archivos: ArchivosPorTipo,
+  ): Promise<void> {
+    for (const [tipo, archivo] of Object.entries(archivos)) {
+      await this.documentos.guardarVersion(
+        tx,
+        usuario.id,
+        id,
+        tipo as TipoDocumentoLegal,
+        archivo,
+      )
+    }
   }
 
   private async crear(

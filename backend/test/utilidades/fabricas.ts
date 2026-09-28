@@ -62,16 +62,40 @@ export function pdfFicticio(texto: string, tamano?: number): Buffer {
   return Buffer.concat([base, Buffer.alloc(tamano - base.length, 0x20)])
 }
 
+export const DOCUMENTOS_OBLIGATORIOS = [
+  "RUT",
+  "CAMARA_COMERCIO",
+  "CEDULA_REP_LEGAL",
+  "FORMULARIO_ARL",
+]
+
+/**
+ * POST /organizaciones en multipart (DEC-4): `datos` en JSON y un PDF
+ * ficticio por cada tipo de `documentos` (por defecto, los obligatorios).
+ */
+export function solicitudRegistro(
+  app: INestApplication<App>,
+  cabeceras: Record<string, string>,
+  cuerpo: unknown = registroValido(),
+  documentos: string[] = DOCUMENTOS_OBLIGATORIOS,
+) {
+  let solicitud = request(app.getHttpServer())
+    .post("/api/v1/organizaciones")
+    .set(cabeceras)
+    .field("datos", JSON.stringify(cuerpo))
+  for (const tipo of documentos) {
+    solicitud = solicitud.attach(tipo, pdfFicticio(tipo), `${tipo}.pdf`)
+  }
+  return solicitud
+}
+
 /** Registra una organización válida y devuelve su id. */
 export async function registrarOrganizacion(
   app: INestApplication<App>,
   cabeceras: Record<string, string>,
   cuerpo: Record<string, unknown> = registroValido(),
 ): Promise<string> {
-  const r = await request(app.getHttpServer())
-    .post("/api/v1/organizaciones")
-    .set(cabeceras)
-    .send(cuerpo)
+  const r = await solicitudRegistro(app, cabeceras, cuerpo)
   if (r.status !== 201) throw new Error(`Registro falló: ${r.status}`)
   return r.body.id as string
 }

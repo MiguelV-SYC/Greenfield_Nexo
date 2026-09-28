@@ -210,7 +210,7 @@ candidato a primera promoción (`/spec-promote --to pruebas`).
 - **Cubre**: R7.5
 - **Archivos**: `backend/src/organizaciones/organizaciones.{controller,service}.ts`
 - **Acceptance**:
-  - [ ] `POST /organizaciones` multipart (DEC-4); `422` con la lista de obligatorios faltantes, también en el reenvío
+  - [x] `POST /organizaciones` multipart (DEC-4); `422` con la lista de obligatorios faltantes, también en el reenvío
 
 ## T25 — Frontend: paso 3 y documentos en validación [M]
 - **Cubre**: R7.1, R7.2, R7.3, R7.5, R7.6, R7.9

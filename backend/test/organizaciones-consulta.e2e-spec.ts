@@ -9,7 +9,11 @@ import {
   limpiarBase,
   sembrarCatalogoMinimo,
 } from "./utilidades/bd"
-import { crearAplicacion, registroValido } from "./utilidades/fabricas"
+import {
+  crearAplicacion,
+  registroValido,
+  solicitudRegistro,
+} from "./utilidades/fabricas"
 
 interface Tarjeta {
   id: string
@@ -39,10 +43,7 @@ describe("GET /organizaciones y /organizaciones/:id (T14)", () => {
       usuario: string,
       cuerpo: object,
     ) => {
-      const r = await request(app.getHttpServer())
-        .post("/api/v1/organizaciones")
-        .set(como(usuario))
-        .send(cuerpo)
+      const r = await solicitudRegistro(app, como(usuario), cuerpo)
       ids[clave] = r.body.id
     }
     await registrar("aprobada", "lider-a", registroValido())

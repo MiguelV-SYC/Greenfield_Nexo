@@ -13,6 +13,8 @@ import {
 } from "@/common/tenant/base-datos-tenant"
 import { excepcionDeCampos } from "@/common/validacion/errores-validacion"
 import type { Prisma } from "@/generated/prisma/client"
+import { DocumentosService } from "./documentos/documentos.service"
+import { excepcionDocumentosFaltantes } from "./documentos/registro-multipart"
 import { calcularEstandaresAplicables } from "./dominio/estandares-aplicables"
 import { aplicarTransicion, type RolActor } from "./dominio/transiciones"
 import type { OrganizacionDto } from "./dto/organizacion.dto"
@@ -46,6 +48,7 @@ export class CorreccionService {
     private readonly prisma: PrismaService,
     private readonly bd: BaseDatosTenant,
     private readonly auditoria: AuditoriaService,
+    private readonly documentos: DocumentosService,
   ) {}
 
   /** R4.6: reemplaza datos y sedes; el NIT se puede corregir (R8.6). */
@@ -62,12 +65,17 @@ export class CorreccionService {
     )
   }
 
-  /** R4.7: vuelve a validación con nueva fecha de envío, sin límite. */
+  /**
+   * R4.7: vuelve a validación con nueva fecha de envío, sin límite. R7.5: no
+   * vuelve si falta algún documento obligatorio.
+   */
   async reenviar(usuario: UsuarioActual, id: string): Promise<OrganizacionDto> {
     if (!esUuid(id)) throw new NotFoundException()
     return this.ejecutar(usuario, async (tx) => {
       const actual = await this.leer(tx, id)
       const nuevo = aplicarTransicion(actual.estado, "REENVIAR", rolDe(usuario))
+      const faltantes = await this.documentos.faltantes(tx, id)
+      if (faltantes.length > 0) throw excepcionDocumentosFaltantes(faltantes)
       await actualizarSiSigueEn(tx, id, actual.estado, {
         estado: nuevo,
         enviadaEn: new Date(),

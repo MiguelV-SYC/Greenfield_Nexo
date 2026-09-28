@@ -73,11 +73,16 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
 
   // Derived from R7.1, R7.2
   it("carga un PDF y lo lista como versión vigente", async () => {
-    const r = await cargar("RUT", pdfFicticio("rut"), LIDER, "RUT 2026 ñ.pdf")
+    const r = await cargar(
+      "NO_AFILIACION_ARL",
+      pdfFicticio("no afiliación"),
+      LIDER,
+      "No afiliación 2026 ñ.pdf",
+    )
     expect(r.status).toBe(200)
     expect(r.body).toMatchObject({
       version: 1,
-      nombreArchivo: "RUT 2026 ñ.pdf",
+      nombreArchivo: "No afiliación 2026 ñ.pdf",
       tipoMime: "application/pdf",
     })
     const lista = await listar()
@@ -89,8 +94,8 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
       "FORMULARIO_ARL",
       "NO_AFILIACION_ARL",
     ])
-    expect(lista.body.documentos[0].vigente).toMatchObject({ version: 1 })
-    expect(lista.body.faltantes).not.toContain("RUT")
+    expect(lista.body.documentos[4].vigente).toMatchObject({ version: 1 })
+    expect(lista.body.faltantes).toEqual([])
   })
 
   // Derived from R7.2
@@ -99,14 +104,13 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
       Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
       Buffer.from("IHDR ficticio"),
     ])
-    const r = await cargar("CEDULA_REP_LEGAL", png, LIDER, "cedula.pdf")
+    const r = await cargar("NO_AFILIACION_ARL", png, LIDER, "certificado.pdf")
     expect(r.status).toBe(200)
     expect(r.body.tipoMime).toBe("image/png")
   })
 
   // Derived from R7.4
   it("reemplazar conserva la versión anterior y queda auditado", async () => {
-    await cargar("RUT", pdfFicticio("primera"))
     const r = await cargar("RUT", pdfFicticio("segunda"))
     expect(r.body.version).toBe(2)
     const filas = await migrador.documentoLegal.findMany({
@@ -116,7 +120,11 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
     expect(filas.map((f) => f.version)).toEqual([1, 2])
     expect(filas[0].objetoVersion).not.toBe(filas[1].objetoVersion)
     const auditoria = await migrador.auditoriaCambio.findMany({
-      where: { organizacionId: id, accion: "CARGAR_DOCUMENTO" },
+      where: {
+        organizacionId: id,
+        accion: "CARGAR_DOCUMENTO",
+        valorNuevo: { path: ["tipo"], equals: "RUT" },
+      },
       orderBy: { creadoEn: "asc" },
     })
     expect(auditoria).toHaveLength(2)
@@ -134,7 +142,7 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
     const r = await cargar("RUT", zip)
     expect(r.status).toBe(415)
     expect(r.body.message).toMatch(/PDF, JPG, PNG o WebP/)
-    expect(await migrador.documentoLegal.count()).toBe(0)
+    expect(await migrador.documentoLegal.count()).toBe(4)
   })
 
   // Derived from R7.9
@@ -152,7 +160,7 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
     const r = await cargar("RUT", pdfFicticio("x", tamano))
     expect(r.status).toBe(413)
     expect(r.body.message).toMatch(/tamaño máximo permitido de 10 MB/)
-    expect(await migrador.documentoLegal.count()).toBe(0)
+    expect(await migrador.documentoLegal.count()).toBe(4)
   })
 
   it("exige el archivo y un tipo de documento conocido", async () => {
@@ -183,12 +191,11 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
 
   // Derived from R7.7, R6.1
   it("otro Líder SST no ve, no carga ni obtiene URLs: 404", async () => {
-    await cargar("RUT", pdfFicticio("rut"))
     expect((await listar(OTRO_LIDER)).status).toBe(404)
     expect((await cargar("RUT", pdfFicticio("x"), OTRO_LIDER)).status).toBe(404)
     expect((await url("RUT", OTRO_LIDER)).status).toBe(404)
     expect((await listar(LIDER, "no-es-uuid")).status).toBe(404)
-    expect(await migrador.documentoLegal.count()).toBe(1)
+    expect(await migrador.documentoLegal.count()).toBe(4)
   })
 
   // Derived from R7.6, R7.7
@@ -205,7 +212,7 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
   })
 
   it("responde 404 si el tipo pedido aún no tiene documento", async () => {
-    expect((await url("CAMARA_COMERCIO")).status).toBe(404)
+    expect((await url("NO_AFILIACION_ARL")).status).toBe(404)
   })
 
   // Derived from R7.6
@@ -217,6 +224,7 @@ describe("Documentos legales: carga, listado y URL firmada (T23)", () => {
     })
     const r = await listar(ADMIN)
     expect(r.status).toBe(200)
-    expect(r.body.documentos[0].vigente).toMatchObject({ version: 1 })
+    expect(r.body.documentos[0].vigente).toMatchObject({ version: 2 })
+    expect(r.body.faltantes).toEqual([])
   })
 })

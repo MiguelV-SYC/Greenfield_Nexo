@@ -1,5 +1,4 @@
 import type { INestApplication } from "@nestjs/common"
-import request from "supertest"
 import type { App } from "supertest/types"
 
 import type { PrismaClient } from "@/generated/prisma/client"
@@ -10,6 +9,7 @@ import {
 } from "./utilidades/bd"
 import {
   crearAplicacion,
+  solicitudRegistro,
   registroValido,
   sedeValida,
 } from "./utilidades/fabricas"
@@ -40,10 +40,7 @@ describe("POST /organizaciones — registro (T13)", () => {
   })
 
   const registrar = (cuerpo: unknown, usuario = LIDER) =>
-    request(app.getHttpServer())
-      .post("/api/v1/organizaciones")
-      .set("x-usuario-mock", usuario)
-      .send(cuerpo as object)
+    solicitudRegistro(app, { "x-usuario-mock": usuario }, cuerpo)
 
   const camposConError = (cuerpo: { errores: { campo: string }[] }) =>
     cuerpo.errores.map((e) => e.campo)
@@ -89,7 +86,7 @@ describe("POST /organizaciones — registro (T13)", () => {
   it("audita el registro", async () => {
     const respuesta = await registrar(registroValido())
     const auditoria = await migrador.auditoriaCambio.findMany({
-      where: { organizacionId: respuesta.body.id },
+      where: { organizacionId: respuesta.body.id, entidad: "Organizacion" },
     })
     expect(auditoria).toEqual([
       expect.objectContaining({
@@ -210,9 +207,7 @@ describe("POST /organizaciones — registro (T13)", () => {
   })
 
   it("exige identidad", async () => {
-    const respuesta = await request(app.getHttpServer())
-      .post("/api/v1/organizaciones")
-      .send(registroValido())
+    const respuesta = await solicitudRegistro(app, {})
     expect(respuesta.status).toBe(401)
   })
 })

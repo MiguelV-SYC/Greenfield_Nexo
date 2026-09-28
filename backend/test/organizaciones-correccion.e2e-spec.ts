@@ -10,6 +10,7 @@ import {
 } from "./utilidades/bd"
 import {
   crearAplicacion,
+  registrarOrganizacion,
   registroValido,
   sedeValida,
 } from "./utilidades/fabricas"
@@ -42,11 +43,7 @@ describe("Corrección y reenvío (T16)", () => {
   beforeEach(async () => {
     await limpiarBase(migrador)
     await sembrarCatalogoMinimo(migrador)
-    const r = await http()
-      .post("/api/v1/organizaciones")
-      .set(LIDER)
-      .send(registroValido())
-    id = r.body.id
+    id = await registrarOrganizacion(app, LIDER)
     await devolver(id)
   })
 
@@ -128,10 +125,11 @@ describe("Corrección y reenvío (T16)", () => {
 
   // Derived from R1.7
   it("rechaza corregir al NIT de otra organización", async () => {
-    await http()
-      .post("/api/v1/organizaciones")
-      .set(OTRO_LIDER)
-      .send(registroValido({ nit: "890903938", digitoVerificacion: "8" }))
+    await registrarOrganizacion(
+      app,
+      OTRO_LIDER,
+      registroValido({ nit: "890903938", digitoVerificacion: "8" }),
+    )
     const r = await corregir(
       registroValido({ nit: "890903938", digitoVerificacion: "8" }),
     )
