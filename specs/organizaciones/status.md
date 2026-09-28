@@ -2,7 +2,7 @@
 feature: organizaciones
 state: in-progress
 methodology_version: "0.170"
-updated: 2026-09-25
+updated: 2026-09-28
 updated_by: "@MiguelV-SYC"
 ---
 <!--
@@ -69,11 +69,11 @@ T17: done | commit 6e3cbeb, 33a4c80 · 2026-09-25
 T18: done | commit 5e5aae7 · 2026-09-25
 T19: done | commit c619b38 · 2026-09-25
 T20: done | commit 9a3fb93 · 2026-09-25
-T21: pending |
-T22: pending |
-T23: pending |
-T24: pending |
-T25: pending |
+T21: done | commit efbc317 · 2026-09-28
+T22: done | commit ed0956b · 2026-09-28
+T23: done | commit e60d100 · 2026-09-28
+T24: done | commit 5c8c78b · 2026-09-28
+T25: done | commit c99e18f · 2026-09-28
 T26: pending |
 T27: pending |
 T28: pending |
@@ -97,3 +97,4 @@ D6 (concepto jurídico Ley 1581 — BLOCK sobre datos reales del piloto): NEGOTI
 - 2026-09-25: fase 0 (Setup) completa; checkpoint verde: `pnpm -r build|lint|test` desde la raíz, Postgres sano en Compose y el frontend sirve las pantallas del kit. Desvíos menores de archivos frente a tasks.md: T3 usa `jest.config.js` (no `.ts`, para no depender de ts-node) con proyectos unit+integración en un solo config; T4 usa `01-roles.sh` (no `.sql`) para leer contraseñas del entorno. NestJS 12 es ESM-only: el backend sigue la plantilla oficial CJS (`require(esm)` de Node 24) y Jest corre con `--experimental-vm-modules`.
 - 2026-09-25: fase 1 (Foundational) completa; checkpoint verde: migraciones 0001–0002 y siembra aplicadas en Compose, `pnpm -r build|lint|test` (58 tests, 98 % de líneas). Decisiones y desvíos: Prisma 7.10.0 con `@prisma/adapter-pg` + `pg` (aprobados). T6 implementa el contexto de tenant como `BaseDatosTenant.ejecutarComo()` (transacción por unidad de trabajo con `set_config` local) en vez de una extensión de Prisma por operación: cubre registros multi-tabla en una sola transacción. El registro inserta la organización sin RETURNING y fija `app.organizacion_nueva` para crear la membresía (RLS). `nexo_migrador` recibe BYPASSRLS (FORCE aplica al dueño; ADR-0001 actualizado). T9: con el OK del owner de D3 se usó la DIVIPOLA oficial (el mockup no traía códigos DANE); D3 pasa a LIVE y CIIU/ARL siguen en MOCK. Entorno: Postgres en 5433 (el 5432 lo ocupa un PostgreSQL 18 nativo) y los `.env` locales apuntan a la IP de la VM de Podman (infra/README.md). T7 tuvo un commit con lint en rojo (89329c6), corregido en 207493a.
 - 2026-09-25: fase 2 (slice P1) completa; checkpoint verde: backend 149 tests (99 % líneas), frontend 39 tests (96 % líneas), 4 E2E de la prueba independiente de P1 con axe-core sin violaciones graves. P1 queda listo para promover a `pruebas`, pero el runtime sigue sin decidir (`repo-config.yaml`). Desvíos respecto de design.md que requieren `/spec-amend`: (1) el frontend usa `NEXO_API_URL` en el servidor y reescritura de `/api/v1` en `next.config.ts` en vez de `NEXT_PUBLIC_API_URL` (sin CORS); (2) la cobertura del frontend se mide sobre el código de la feature (`src/lib/api`, `src/components/organizaciones`), y las páginas y el kit visual se cubren con los E2E; (3) los DTO de respuesta declaran los campos nullable como obligatorios. Correcciones hechas en el camino: `main.ts` no cargaba `backend/.env` (T17); un `aria-label` prohibido en el indicador de pasos del asistente (T20). Pendientes conocidos: el Topbar del kit muestra un usuario fijo ("Administrador"/"MA"); la revisión del Administrador muestra el código DANE del municipio, no su nombre; el NIT de ejemplo del mockup (890206391-5) no tiene un DV válido. `next dev` genera `frontend/AGENTS.md` y `frontend/CLAUDE.md`: sin versionar hasta que el dev decida.
+- 2026-09-28: fase 3 (slice P2, documentos legales) completa; checkpoint verde **con datos ficticios** (D6 BLOCK sigue vigente: no se cargan documentos reales del piloto): backend 220 tests (99 % líneas), frontend 53 tests (97 % líneas), 6 E2E (4 de P1 + 2 de la prueba independiente de P2) con axe-core sin violaciones graves. Dependencias aprobadas por el dev: `@aws-sdk/client-s3` y `@aws-sdk/s3-request-presigner` 3.1141.0 (Apache-2.0; `pnpm audit` sin hallazgos nuevos, los 3 existentes vienen de `prisma`). Decisiones y desvíos que requieren `/spec-amend`: (1) las imágenes oficiales de MinIO ya no se publican; Compose usa `bitnamilegacy/minio:2025.7.23` (MinIO real, sin parches de seguridad) solo para desarrollo, y el almacenamiento desplegado queda atado al deploy target; (2) `infra/minio/preparar.sh` crea los buckets con Object Lock GOVERNANCE 20 años y un usuario `nexo-app` sin `DeleteObject*` ni `BypassGovernanceRetention` (R7.8 probado contra MinIO); (3) formatos aceptados: PDF, JPG, PNG y WebP, detectados por firma; (4) el 413 lo produce multer al pasar 10 MB sin guardar el resto; se descartó rechazar por `Content-Length` porque el cliente recibe un corte de conexión en vez del 413; (5) `PUT .../documentos/:tipo` responde 403 al Administrador y se permite en `DEVUELTA` y `APROBADA`; (6) `POST /organizaciones` en multipart usa el campo `datos` (JSON) y un campo por tipo; un registro JSON sin archivos responde 422; (7) `DocumentoLegal` además no tiene `UPDATE` para `nexo_app` y lleva CHECK de tamaño, tipo y versión; (8) NFR6: se corrigieron en `nexo-v5.css` el contraste de `.doc-preview-btn` y el foco de `.doc-file-label` (DEC-13). Pendientes conocidos: el frontend no tiene todavía pantalla de corrección de una organización `DEVUELTA` (el API sí: `PUT .../documentos/:tipo` y reenvío con 422); el asistente no ofrece vista previa del archivo local (sí la revisión del Administrador); los eventos de log `documento.cargado` (y los de P1) no se emiten aún.
