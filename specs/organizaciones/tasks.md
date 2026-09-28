@@ -190,8 +190,8 @@ candidato a primera promoción (`/spec-promote --to pruebas`).
 - **Cubre**: R7.8, NFR5
 - **Archivos**: `compose.yaml` (servicio `minio`), `backend/src/infra/almacenamiento/`
 - **Acceptance**:
-  - [ ] Bucket con versionado y Object Lock governance 20 años (DEC-3)
-  - [ ] Cliente S3/MinIO aprobado antes de instalar (pendiente de OK)
+  - [x] Bucket con versionado y Object Lock governance 20 años (DEC-3)
+  - [x] Cliente S3/MinIO aprobado antes de instalar (`@aws-sdk/client-s3` y `@aws-sdk/s3-request-presigner` 3.1141.0, OK del dev 2026-09-28)
 
 ## T22 — Modelo de documentos legales [S]
 - **Cubre**: R7.1, R7.4, R7.8
