@@ -100,6 +100,9 @@ export function aCuerpo(
   }
 }
 
+/** Campos que valida el paso 2 antes de pasar a los documentos. */
+export const CAMPOS_PASO_2 = ["sedes"] as const
+
 /** Paso del asistente al que pertenece un campo con error del servidor. */
 export function pasoDelCampo(campo: string): 1 | 2 {
   return campo.startsWith("sedes") ? 2 : 1

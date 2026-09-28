@@ -12,7 +12,7 @@ import { sembrarCatalogos } from "@/organizaciones/catalogos/sembrador"
 // los catálogos sembrados. Solo corre sobre bases cuyo nombre termina en
 // `_pruebas`, para que nunca pueda vaciar datos de desarrollo o producción.
 const TABLAS =
-  '"AuditoriaCambio", "MiembroOrganizacion", "Sede", "Organizacion"'
+  '"DocumentoLegal", "AuditoriaCambio", "MiembroOrganizacion", "Sede", "Organizacion"'
 
 function exigirBasePruebas(url: string): void {
   const base = new URL(url).pathname.replace(/^\//, "")

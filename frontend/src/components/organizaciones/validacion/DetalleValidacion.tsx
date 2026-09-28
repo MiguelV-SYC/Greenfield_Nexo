@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { Panel } from "@/components/app/primitives"
+import { DocumentosValidacion } from "./DocumentosValidacion"
 import type { DetalleOrganizacion, ServiciosValidacion } from "./servicios"
 
 function Dato({
@@ -20,15 +21,18 @@ function Dato({
 
 export interface DetalleValidacionProps {
   id: string
-  detalle: ServiciosValidacion["detalle"]
+  servicios: ServiciosValidacion
   onAprobar: () => void
   onDevolver: (organizacion: string) => void
 }
 
-/** R5.9: identificación legal, sedes y estándares de una organización En validación. */
+/**
+ * R5.9, R7.6: identificación legal, sedes, estándares y documentos de una
+ * organización En validación.
+ */
 export function DetalleValidacion({
   id,
-  detalle,
+  servicios,
   onAprobar,
   onDevolver,
 }: DetalleValidacionProps) {
@@ -36,13 +40,14 @@ export function DetalleValidacion({
 
   useEffect(() => {
     let vigente = true
-    detalle(id)
+    servicios
+      .detalle(id)
       .then((d) => vigente && setDatos(d))
       .catch(() => vigente && setDatos(null))
     return () => {
       vigente = false
     }
-  }, [id, detalle])
+  }, [id, servicios])
 
   if (!datos) return <p role="status">Cargando organización…</p>
   return (
@@ -72,6 +77,7 @@ export function DetalleValidacion({
             </li>
           ))}
         </ul>
+        <DocumentosValidacion id={id} servicios={servicios} />
         <div className="wizard-nav">
           <button
             type="button"

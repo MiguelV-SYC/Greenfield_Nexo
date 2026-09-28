@@ -116,6 +116,54 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/v1/organizaciones/{id}/documentos": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["DocumentosController_listar"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/organizaciones/{id}/documentos/{tipo}": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put: operations["DocumentosController_cargar"]
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/organizaciones/{id}/documentos/{tipo}/url": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["DocumentosController_url"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/v1/catalogos/departamentos": {
     parameters: {
       query?: never
@@ -382,6 +430,45 @@ export interface components {
       /** @example El RUT no corresponde a la razón social */
       motivo: string
     }
+    VersionDocumentoDto: {
+      /** @description 1 en la primera carga; sube con cada reemplazo (R7.4) */
+      version: number
+      nombreArchivo: string
+      /** @enum {string} */
+      tipoMime: "application/pdf" | "image/jpeg" | "image/png" | "image/webp"
+      tamanoBytes: number
+      /** Format: date-time */
+      cargadoEn: string
+    }
+    DocumentoLegalDto: {
+      /** @enum {string} */
+      tipo:
+        | "RUT"
+        | "CAMARA_COMERCIO"
+        | "CEDULA_REP_LEGAL"
+        | "FORMULARIO_ARL"
+        | "NO_AFILIACION_ARL"
+      nombre: string
+      obligatorio: boolean
+      vigente: components["schemas"]["VersionDocumentoDto"] | null
+    }
+    ListaDocumentosDto: {
+      documentos: components["schemas"]["DocumentoLegalDto"][]
+      /** @description Obligatorios sin cargar: impiden el envío a validación (R7.5) */
+      faltantes: (
+        | "RUT"
+        | "CAMARA_COMERCIO"
+        | "CEDULA_REP_LEGAL"
+        | "FORMULARIO_ARL"
+        | "NO_AFILIACION_ARL"
+      )[]
+    }
+    UrlDocumentoDto: {
+      /** @description URL firmada de corta duración (R7.7) */
+      url: string
+      /** Format: date-time */
+      expiraEn: string
+    }
     DepartamentoDto: {
       /** @example 68 */
       codigo: string
@@ -458,9 +545,23 @@ export interface operations {
       path?: never
       cookie?: never
     }
+    /** @description DEC-4: datos = JSON de RegistrarOrganizacionDto; un archivo por tipo de documento */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RegistrarOrganizacionDto"]
+        "multipart/form-data": {
+          /** @description JSON de RegistrarOrganizacionDto */
+          datos: string
+          /** Format: binary */
+          RUT: string
+          /** Format: binary */
+          CAMARA_COMERCIO: string
+          /** Format: binary */
+          CEDULA_REP_LEGAL: string
+          /** Format: binary */
+          FORMULARIO_ARL: string
+          /** Format: binary */
+          NO_AFILIACION_ARL?: string
+        }
       }
     }
     responses: {
@@ -481,6 +582,27 @@ export interface operations {
       }
       /** @description El NIT ya está registrado (R1.7) */
       409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Un archivo supera 10 MB (R7.9) */
+      413: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Un archivo no es PDF ni imagen (R7.3) */
+      415: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Faltan documentos obligatorios, en faltantes (R7.5) */
+      422: {
         headers: {
           [name: string]: unknown
         }
@@ -609,6 +731,13 @@ export interface operations {
         }
         content?: never
       }
+      /** @description Faltan documentos obligatorios, en faltantes (R7.5) */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
     }
   }
   AdminValidacionController_cola: {
@@ -704,6 +833,127 @@ export interface operations {
       }
       /** @description No está En validación (R4.10) */
       409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  DocumentosController_listar: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ListaDocumentosDto"]
+        }
+      }
+      /** @description No existe o no es del usuario (R6.1) */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  DocumentosController_cargar: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+        tipo: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "multipart/form-data": {
+          /** Format: binary */
+          archivo: string
+        }
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["VersionDocumentoDto"]
+        }
+      }
+      /** @description Solo el Líder SST carga documentos */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description No existe o no es del usuario (R6.1) */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description La organización está En validación */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Más de 10 MB (R7.9) */
+      413: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description No es PDF ni imagen (R7.3) */
+      415: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  DocumentosController_url: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+        tipo: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["UrlDocumentoDto"]
+        }
+      }
+      /** @description No existe o no es del usuario (R6.1) */
+      404: {
         headers: {
           [name: string]: unknown
         }

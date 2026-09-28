@@ -73,6 +73,39 @@ async function llenarSede(u = usuario(), i = 0) {
   await u.click(await en.findByRole("option", { name: /6201/ }))
 }
 
+const OBLIGATORIOS = [
+  "RUT actualizado",
+  "Certificado de Cámara de Comercio",
+  "Cédula del representante legal",
+  "Formulario de afiliación a ARL",
+]
+
+// D6 (Ley 1581): archivos ficticios.
+const pdf = (nombre: string, tamano = 2048) =>
+  new File([new Uint8Array(tamano)], nombre, { type: "application/pdf" })
+
+async function irADocumentos(u = usuario()) {
+  await u.click(screen.getByRole("button", { name: /siguiente/i }))
+  await screen.findByText(/documentos legales requeridos/i)
+}
+
+async function cargarObligatorios(u = usuario()) {
+  for (const nombre of OBLIGATORIOS) {
+    await u.upload(
+      screen.getByLabelText(`Cargar ${nombre}`),
+      pdf(`${nombre}.pdf`),
+    )
+  }
+}
+
+async function registrarCompleto(u = usuario()) {
+  await llenarPaso1(u)
+  await llenarSede(u)
+  await irADocumentos(u)
+  await cargarObligatorios(u)
+  await u.click(screen.getByRole("button", { name: /registrar organización/i }))
+}
+
 describe("AsistenteRegistro", () => {
   // Derived from R5.10
   it("muestra un indicador mientras carga los catálogos", () => {
@@ -183,9 +216,7 @@ describe("AsistenteRegistro", () => {
     const { s } = await abrir()
     const u = usuario()
     await llenarPaso1(u)
-    await u.click(
-      screen.getByRole("button", { name: /registrar organización/i }),
-    )
+    await u.click(screen.getByRole("button", { name: /siguiente/i }))
     expect(
       await screen.findByText(/escribe el nombre de la sede/i),
     ).toBeInTheDocument()
@@ -198,31 +229,34 @@ describe("AsistenteRegistro", () => {
   // Derived from R4.1 y R1.2
   it("registra con los datos del formulario y sin opcionales vacíos", async () => {
     const { s, onRegistrada } = await abrir()
-    const u = usuario()
-    await llenarPaso1(u)
-    await llenarSede(u)
-    await u.click(
-      screen.getByRole("button", { name: /registrar organización/i }),
-    )
+    await registrarCompleto()
     await waitFor(() => expect(onRegistrada).toHaveBeenCalled())
-    expect(s.registrar).toHaveBeenCalledWith({
-      razonSocial: "Dirección de Impuestos",
-      tipoPersona: "JURIDICA",
-      nit: "800197268",
-      digitoVerificacion: "4",
-      repLegalNombre: "Representante",
-      sedes: [
-        {
-          nombre: "Oficina principal",
-          direccion: "Calle 36",
-          departamentoCodigo: "68",
-          municipioCodigo: "68001",
-          claseRiesgo: "III",
-          trabajadores: 12,
-          ciiuCodigo: "6201",
-        },
-      ],
-    })
+    expect(s.registrar).toHaveBeenCalledWith(
+      {
+        razonSocial: "Dirección de Impuestos",
+        tipoPersona: "JURIDICA",
+        nit: "800197268",
+        digitoVerificacion: "4",
+        repLegalNombre: "Representante",
+        sedes: [
+          {
+            nombre: "Oficina principal",
+            direccion: "Calle 36",
+            departamentoCodigo: "68",
+            municipioCodigo: "68001",
+            claseRiesgo: "III",
+            trabajadores: 12,
+            ciiuCodigo: "6201",
+          },
+        ],
+      },
+      {
+        RUT: expect.any(File),
+        CAMARA_COMERCIO: expect.any(File),
+        CEDULA_REP_LEGAL: expect.any(File),
+        FORMULARIO_ARL: expect.any(File),
+      },
+    )
   })
 
   // Derived from R1.6
@@ -236,12 +270,7 @@ describe("AsistenteRegistro", () => {
       ])
     })
     await abrir(servicios({ registrar }))
-    const u = usuario()
-    await llenarPaso1(u)
-    await llenarSede(u)
-    await u.click(
-      screen.getByRole("button", { name: /registrar organización/i }),
-    )
+    await registrarCompleto()
     expect(
       await screen.findByText(/no corresponde al nit/i),
     ).toBeInTheDocument()
@@ -254,12 +283,7 @@ describe("AsistenteRegistro", () => {
       throw new ErrorApi(409)
     })
     await abrir(servicios({ registrar }))
-    const u = usuario()
-    await llenarPaso1(u)
-    await llenarSede(u)
-    await u.click(
-      screen.getByRole("button", { name: /registrar organización/i }),
-    )
+    await registrarCompleto()
     expect(
       await screen.findByText(/el nit ya está registrado/i),
     ).toBeInTheDocument()
@@ -270,12 +294,125 @@ describe("AsistenteRegistro", () => {
       throw new Error("sin red")
     })
     await abrir(servicios({ registrar }))
+    await registrarCompleto()
+    expect(await screen.findByText(/no pudimos registrar/i)).toBeInTheDocument()
+  })
+})
+
+describe("AsistenteRegistro — paso 3, documentos legales", () => {
+  async function enDocumentos() {
+    const contexto = await abrir()
     const u = usuario()
     await llenarPaso1(u)
     await llenarSede(u)
+    await irADocumentos(u)
+    return { ...contexto, u }
+  }
+
+  // Derived from R7.1
+  it("lista los cuatro obligatorios pendientes y el opcional", async () => {
+    await enDocumentos()
+    const filas = within(
+      screen.getByRole("list", { name: /documentos legales/i }),
+    ).getAllByRole("listitem")
+    expect(filas).toHaveLength(5)
+    expect(filas[0]).toHaveTextContent("RUT actualizado")
+    expect(filas[0]).toHaveTextContent("Pendiente")
+    expect(filas[4]).toHaveTextContent("Opcional")
+    expect(screen.getByText("Paso 3 de 3")).toBeInTheDocument()
+  })
+
+  // Derived from R7.5
+  it("no registra sin los obligatorios e indica cuáles faltan", async () => {
+    const { s, u } = await enDocumentos()
+    await u.upload(
+      screen.getByLabelText("Cargar RUT actualizado"),
+      pdf("rut.pdf"),
+    )
     await u.click(
       screen.getByRole("button", { name: /registrar organización/i }),
     )
-    expect(await screen.findByText(/no pudimos registrar/i)).toBeInTheDocument()
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Faltan documentos obligatorios: Certificado de Cámara de Comercio, " +
+        "Cédula del representante legal, Formulario de afiliación a ARL",
+    )
+    expect(s.registrar).not.toHaveBeenCalled()
+  })
+
+  // Derived from R7.2, R7.4
+  it("muestra el archivo cargado y permite reemplazarlo", async () => {
+    const { u } = await enDocumentos()
+    await u.upload(
+      screen.getByLabelText("Cargar RUT actualizado"),
+      pdf("rut-viejo.pdf", 325_632),
+    )
+    expect(screen.getByText("318 KB · rut-viejo.pdf")).toBeInTheDocument()
+    await u.upload(
+      screen.getByLabelText("Reemplazar RUT actualizado"),
+      pdf("rut-nuevo.pdf"),
+    )
+    expect(screen.getByText(/rut-nuevo\.pdf/)).toBeInTheDocument()
+  })
+
+  // Derived from R7.3
+  it("rechaza en el navegador lo que no es PDF ni imagen", async () => {
+    await enDocumentos()
+    // El navegador permite elegir "Todos los archivos" aunque haya `accept`.
+    const u = userEvent.setup({ applyAccept: false })
+    const zip = new File(["PK"], "rut.zip", { type: "application/zip" })
+    await u.upload(screen.getByLabelText("Cargar RUT actualizado"), zip)
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /formatos aceptados: pdf, jpg, png o webp/i,
+    )
+    expect(screen.getByLabelText("Cargar RUT actualizado")).toBeInTheDocument()
+  })
+
+  // Derived from R7.9
+  it("rechaza en el navegador un archivo de más de 10 MB", async () => {
+    const { u } = await enDocumentos()
+    await u.upload(
+      screen.getByLabelText("Cargar RUT actualizado"),
+      pdf("rut.pdf", 10 * 1024 * 1024 + 1),
+    )
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /tamaño máximo permitido de 10 MB/,
+    )
+  })
+
+  // Derived from R7.5
+  it("muestra los faltantes que informa el servidor", async () => {
+    const registrar = jest.fn(async () => {
+      throw new ErrorApi(422, [], {
+        mensaje: "Faltan documentos obligatorios",
+        faltantes: ["RUT"],
+      })
+    })
+    await abrir(servicios({ registrar }))
+    await registrarCompleto()
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Faltan documentos obligatorios: RUT actualizado",
+    )
+    expect(screen.getByText("Paso 3 de 3")).toBeInTheDocument()
+  })
+
+  // Derived from R7.3, R7.9
+  it("muestra el rechazo del servidor por tipo o tamaño", async () => {
+    const registrar = jest.fn(async () => {
+      throw new ErrorApi(415, [], {
+        mensaje:
+          "Formato no aceptado. Formatos aceptados: PDF, JPG, PNG o WebP",
+      })
+    })
+    await abrir(servicios({ registrar }))
+    await registrarCompleto()
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /formato no aceptado/i,
+    )
+  })
+
+  it("vuelve a las sedes con Atrás", async () => {
+    const { u } = await enDocumentos()
+    await u.click(screen.getByRole("button", { name: /atrás/i }))
+    expect(await screen.findByText(/centro de trabajo #1/i)).toBeInTheDocument()
   })
 })

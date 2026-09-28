@@ -543,7 +543,10 @@
   .doc-file-label{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text-primary);cursor:pointer;white-space:nowrap;}
   .doc-file-label:hover{border-color:var(--gray-400);}
   .doc-file-label input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;}
-  .doc-preview-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--primary);background:var(--primary-tint);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  /* NFR6 (DEC-13): el input está oculto; el foco de teclado se ve en su etiqueta. */
+  .doc-file-label:focus-within{outline:2px solid var(--primary);outline-offset:2px;}
+  .doc-preview-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--primary);background:var(--primary-tint);color:var(--primary-dark);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  /* NFR6 (DEC-13): --primary sobre --primary-tint no llega a 4.5:1; el texto va en --primary-dark. */
   .doc-preview-frame{width:100%;height:70vh;border:1px solid var(--border);border-radius:10px;background:var(--gray-50);}
   .doc-preview-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:320px;border:1px dashed var(--border);border-radius:10px;background:var(--gray-50);color:var(--text-secondary);text-align:center;padding:24px;}
   .doc-preview-placeholder svg{color:var(--gray-400);}

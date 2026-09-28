@@ -64,6 +64,11 @@ function servicios(
       }),
     ]),
     detalle: jest.fn(async () => detalle),
+    documentos: jest.fn(async () => ({ documentos: [], faltantes: [] })),
+    urlDocumento: jest.fn(async () => ({
+      url: "http://minio/doc",
+      expiraEn: "2026-09-28T15:05:00.000Z",
+    })),
     aprobar: jest.fn(async () => undefined),
     devolver: jest.fn(async () => undefined),
     ...sobrescribir,

@@ -7,11 +7,18 @@ export type Esquemas = components["schemas"]
 export type Tarjeta = Esquemas["TarjetaOrganizacionDto"]
 export type ListaOrganizaciones = Esquemas["ListaOrganizacionesDto"]
 
+/** Mensaje y obligatorios faltantes (413, 415, 422 de documentos, R7.*). */
+export interface DetalleErrorApi {
+  mensaje?: string
+  faltantes?: string[]
+}
+
 /** Error de la API con los campos inválidos (design.md § Contratos). */
 export class ErrorApi extends Error {
   constructor(
     readonly estado: number,
     readonly errores: { campo: string; mensajes: string[] }[] = [],
+    readonly detalle: DetalleErrorApi = {},
   ) {
     super(`La API respondió ${estado}`)
   }
@@ -36,6 +43,10 @@ export function exigir<T>(resultado: {
 }): T {
   if (resultado.data !== undefined) return resultado.data
   const cuerpo = resultado.error as
-    { errores?: ErrorApi["errores"] } | undefined
-  throw new ErrorApi(resultado.response.status, cuerpo?.errores ?? [])
+    | { errores?: ErrorApi["errores"]; message?: unknown; faltantes?: string[] }
+    | undefined
+  throw new ErrorApi(resultado.response.status, cuerpo?.errores ?? [], {
+    mensaje: typeof cuerpo?.message === "string" ? cuerpo.message : undefined,
+    faltantes: cuerpo?.faltantes,
+  })
 }

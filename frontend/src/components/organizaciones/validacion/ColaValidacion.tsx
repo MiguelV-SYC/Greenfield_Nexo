@@ -186,7 +186,7 @@ export function ColaValidacion({
       {seleccion && (
         <DetalleValidacion
           id={seleccion}
-          detalle={servicios.detalle}
+          servicios={servicios}
           onAprobar={() =>
             decidir(
               () => servicios.aprobar(seleccion),

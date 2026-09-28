@@ -216,7 +216,7 @@ candidato a primera promoción (`/spec-promote --to pruebas`).
 - **Cubre**: R7.1, R7.2, R7.3, R7.5, R7.6, R7.9
 - **Archivos**: `frontend/src/components/organizaciones/asistente/`, `frontend/src/app/admin/validacion/`
 - **Acceptance**:
-  - [ ] Paso 3 del mockup; el Administrador ve los documentos antes de aprobar
+  - [x] Paso 3 del mockup; el Administrador ve los documentos antes de aprobar
 
 **Checkpoint fase 3**: prueba independiente de P2 verde con datos
 ficticios. **D6 (BLOCK)**: no se cargan documentos reales del piloto
